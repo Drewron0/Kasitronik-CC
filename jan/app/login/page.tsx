@@ -3,17 +3,49 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import styles from "./login.module.css";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
+const router = useRouter();
+const [loading, setLoading] = useState(false);
+ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setMessage(
-      "Login belum tersedia. Formulir ini belum terhubung ke Supabase."
-    );
+  if (loading) return;
+
+  setMessage("");
+
+  const formData = new FormData(event.currentTarget);
+  const email = String(formData.get("email") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+
+  setLoading(true);
+
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setMessage(
+        error.code === "email_not_confirmed"
+          ? "Konfirmasi email terlebih dahulu sebelum masuk."
+          : "Login gagal. Periksa email dan kata sandi, lalu coba lagi."
+      );
+      return;
+    }
+
+    router.replace("/");
+  } catch {
+    setMessage("Tidak dapat menghubungi server. Coba lagi.");
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
     <main className={styles.page}>
@@ -118,9 +150,13 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button type="submit" className={styles.submitButton}>
-              Masuk
-            </button>
+            <button
+  type="submit"
+  className={styles.submitButton}
+  disabled={loading}
+>
+  {loading ? "Memproses..." : "Masuk"}
+</button>
 
             <p className={styles.message} role="status">
   {message}

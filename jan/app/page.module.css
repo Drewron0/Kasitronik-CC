@@ -768,3 +768,69 @@
     opacity: 0.04;
   }
 }
+
+.accountNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.accountName {
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountName strong {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.accountStatus {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.logoutButton {
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 1px solid var(--border);
+  border-radius: 48px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.logoutButton:hover:not(:disabled) {
+  border-color: var(--green);
+  background: var(--sage);
+}
+
+.logoutButton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.logoutButton:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 4px;
+}
+
+.logoutButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.accountError {
+  flex-basis: 100%;
+  color: #a12d24;
+  font-size: 12px;
+}

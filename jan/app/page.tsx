@@ -1,5 +1,5 @@
 import styles from "./page.module.css";
-import Link from "next/link";
+import AccountNav from "./components/AccountNav";
 
 export default function Home() {
   return (
@@ -19,9 +19,7 @@ export default function Home() {
         <nav className={styles.nav} aria-label="Navigasi utama">
           <a href="#alur">Cara kerja</a>
           <a href="#persiapan">Panduan barang</a>
-          <Link href="/login" className={styles.loginButton}>
-  Masuk
-</Link>
+          <AccountNav />
         </nav>
       </header>
 

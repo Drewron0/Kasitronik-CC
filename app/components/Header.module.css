@@ -1,0 +1,194 @@
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  width: 100%;
+  padding-block: 16px;
+  background: rgba(250, 249, 247, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 0 rgba(225, 231, 222, 0.5);
+  transition: padding 0.2s ease, background-color 0.2s ease;
+}
+
+.headerInner {
+  width: min(1200px, calc(100% - 48px));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.brand:hover {
+  opacity: 0.9;
+}
+
+.brandLogo {
+  width: 36px;
+  height: 36px;
+  display: block;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px 2px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* Animated underline: opens from small line at center on hover, closes on unhover */
+.navLink::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--green);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navLink:hover {
+  color: var(--green);
+  text-decoration: none;
+}
+
+.navLink:hover::after {
+  transform: scaleX(1);
+}
+
+.navLinkActive {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.accountNav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.accountName {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.accountName strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.accountStatus {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.accountError {
+  color: var(--destructive);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.logoutButton {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.logoutButton:hover:not(:disabled) {
+  border-color: var(--destructive);
+  color: var(--destructive);
+  background: #fff5f5;
+}
+
+.logoutButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding-block: 10px;
+  }
+
+  .headerInner {
+    width: calc(100% - 24px);
+    gap: 8px;
+  }
+
+  .brand {
+    font-size: 17px;
+    gap: 6px;
+  }
+
+  .brandLogo {
+    width: 26px;
+    height: 26px;
+  }
+
+  .nav {
+    gap: 8px;
+  }
+
+  .accountNav {
+    gap: 8px;
+  }
+
+  .navLink {
+    font-size: 13px;
+    padding: 2px 4px;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+
+  .desktopOnly {
+    display: none !important;
+  }
+}

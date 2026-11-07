@@ -3,21 +3,24 @@
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
-import { supabase } from "../../lib/supabase";
-import styles from "../page.module.css";
+import { supabase } from "@/lib/supabase";
+import { logoutAction } from "../actions/logout.action";
+import styles from "./Header.module.css";
 
 export default function AccountNav() {
   const [user, setUser] = useState<User | null>(null);
-  const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      setReady(true);
     });
 
     return () => subscription.unsubscribe();
@@ -27,27 +30,12 @@ export default function AccountNav() {
     setLoading(true);
     setError("");
 
-    try {
-      const { error } = await supabase.auth.signOut({
-        scope: "local",
-      });
+    const result = await logoutAction();
+    setLoading(false);
 
-      if (error) {
-        setError("Gagal keluar. Silakan coba lagi.");
-      }
-    } catch {
-      setError("Tidak dapat menghubungi server.");
-    } finally {
-      setLoading(false);
+    if (!result.success && result.error) {
+      setError(result.error);
     }
-  }
-
-  if (!ready) {
-    return (
-      <span className={styles.accountStatus} role="status">
-        Memuat akun...
-      </span>
-    );
   }
 
   const fullName = user?.user_metadata?.full_name;
@@ -75,10 +63,12 @@ export default function AccountNav() {
         </>
       ) : (
         <>
-          <Link href="/login" className={styles.loginButton}>
+          <Link href="/login" className={styles.navLink}>
             Masuk
           </Link>
-          <Link href="/register" >Daftar</Link>
+          <Link href="/register" className={styles.navLink}>
+            Daftar
+          </Link>
         </>
       )}
 

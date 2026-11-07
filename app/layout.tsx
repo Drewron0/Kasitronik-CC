@@ -13,12 +13,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "E-Waste | Elektronik Lama, Langkah Baru",
+  title: {
+    default: "Kasitronik - Pengelolaan & Penyaluran E-Waste",
+    template: "%s | Kasitronik",
+  },
   description:
-    "Siapkan laporan barang elektronik tidak terpakai dan pelajari alur pengambilan oleh pengepul.",
+    "Platform digital untuk menghubungkan barang elektronik tidak terpakai dengan mitra pengepul terpercaya.",
+  icons: {
+    icon: [
+      { url: "/logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="id"

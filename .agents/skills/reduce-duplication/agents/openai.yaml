@@ -1,0 +1,5 @@
+interface:
+  display_name: Reduce code duplication
+  short_description: Finds duplicated logic, separates true duplication from code that only looks alike, and merges only true duplicates behind one well-named function. Use when one fix keeps landing in many places.
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="logoTitleE">
+  <title id="logoTitleE">Logo siklus tiga panah dengan satu panah charger</title>
+  <defs>
+    <!-- Celah transparan seragam (6px) di sekeliling kepala panah / colokan charger sebelumnya -->
+    <mask id="m0" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512"><rect width="512" height="512" fill="#fff"/><g transform="rotate(-120 256 256)"><path d="M401.6 108.7 L409.1 194.4 L331.2 158.0 Z" fill="#000" stroke="#000" stroke-width="22" stroke-linejoin="round"/></g></mask>
+    <mask id="m1" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512"><rect width="512" height="512" fill="#fff"/><g transform="rotate(-120 256 256)"><path d="M401.6 108.7 L409.1 194.4 L331.2 158.0 Z" fill="#000" stroke="#000" stroke-width="22" stroke-linejoin="round"/></g></mask>
+    <mask id="m2" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512"><rect width="512" height="512" fill="#fff"/><g transform="rotate(-120 256 256)" fill="none" stroke="#000" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"><path d="M100.0 202.3 A165 165 0 0 1 409.1 194.4"/><path d="M216.1 95.9 C241.6 91.6 239.7 69.7 269.0 69.5 A187 187 0 0 1 429.5 186.2"/><path d="M273.2 91.9 C298.7 96.6 293.0 117.9 314.2 125.4 A143 143 0 0 1 388.7 202.6"/><circle cx="409.1" cy="194.4" r="14" stroke="none" fill="#000"/><circle cx="429.5" cy="186.2" r="14" stroke="none" fill="#000"/><circle cx="388.7" cy="202.6" r="14" stroke="none" fill="#000"/></g></mask>
+
+    <!-- Panah biasa (posisi 90 derajat): badan pita + kepala segitiga sama sisi -->
+    <g id="arrow" fill="#046645" stroke="#046645" stroke-width="10" stroke-linejoin="round">
+      <path d="M78.2 194.8 A188.0 188.0 0 0 1 393.5 127.8 L359.9 159.2 A142.0 142.0 0 0 0 121.7 209.8 Z"/>
+      <path d="M401.6 108.7 L409.1 194.4 L331.2 158.0 Z"/>
+    </g>
+
+    <!-- Panah charger (posisi 90 derajat, diputar 120 derajat): tanpa badan, 1 batang kecil memecah jadi 3 -->
+    <g id="charger">
+      <g fill="none" stroke="#046645" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M100.0 202.3 A165 165 0 0 1 409.1 194.4"/>
+        <path d="M216.1 95.9 C241.6 91.6 239.7 69.7 269.0 69.5 A187 187 0 0 1 429.5 186.2"/>
+        <path d="M273.2 91.9 C298.7 96.6 293.0 117.9 314.2 125.4 A143 143 0 0 1 388.7 202.6"/>
+      </g>
+      <circle cx="409.1" cy="194.4" r="8" fill="#046645"/><circle cx="409.1" cy="194.4" r="3" fill="#e8f2e8"/>
+        <circle cx="429.5" cy="186.2" r="8" fill="#046645"/><circle cx="429.5" cy="186.2" r="3" fill="#e8f2e8"/>
+        <circle cx="388.7" cy="202.6" r="8" fill="#046645"/><circle cx="388.7" cy="202.6" r="3" fill="#e8f2e8"/>
+    </g>
+  </defs>
+
+  <g mask="url(#m0)"><use href="#arrow"/></g>
+  <g transform="rotate(120 256 256)"><g mask="url(#m1)"><use href="#charger"/></g></g>
+  <g transform="rotate(240 256 256)"><g mask="url(#m2)"><use href="#arrow"/></g></g>
+  <!-- Petir di tengah: mengisi ruang kosong sekaligus menegaskan tema charger (hapus grup ini jika tidak diperlukan) -->
+  <g id="bolt" transform="translate(256 256) scale(1.1) translate(-259 -257)">
+    <path d="M282 186 L226 268 L254 268 L236 328 L292 240 L264 240 Z" fill="#046645" stroke="#046645" stroke-width="5" stroke-linejoin="round"/>
+  </g>
+</svg>

@@ -1,0 +1,100 @@
+name: Deploy Kasitronik to CloudPanel
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint Code
+        run: pnpm run lint
+
+      - name: Build Next.js App
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: pnpm run build
+
+  deploy:
+    name: Deploy to CloudPanel via SSH
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Execute Deployment Commands on CloudPanel Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            set -e
+
+            echo "==> 1. Membuka direktori aplikasi..."
+            cd ${{ secrets.TARGET_DIR }}
+
+            echo "==> 2. Menarik commit terbaru..."
+            if [ -n "${{ secrets.GH_TOKEN }}" ]; then
+              git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+            fi
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "==> 3. Memeriksa environment pnpm..."
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH:/usr/local/bin:/usr/bin:$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node 2>/dev/null | tail -n 1)/bin"
+
+            if ! command -v pnpm &> /dev/null; then
+              echo "Memasang pnpm..."
+              corepack enable || npm install -g pnpm
+            fi
+
+            echo "==> 4. Menginstal dependensi di server..."
+            pnpm install --frozen-lockfile
+
+            echo "==> 5. Membangun aplikasi Next.js produksi..."
+            pnpm run build
+
+            echo "==> 6. Merestart layanan Node.js di CloudPanel..."
+            if command -v pm2 &> /dev/null; then
+              pm2 reload all || pm2 restart all || pm2 start pnpm --name "kasitronik" -- start
+            fi
+
+            echo "==> Deployment Kasitronik ke CloudPanel Berhasil Dilakukan!"

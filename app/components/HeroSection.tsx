@@ -66,7 +66,7 @@ export default function HeroSection() {
         <p className={styles.eyebrow}>PENGELOLAAN ELEKTRONIK</p>
 
         <h1 id="hero-title">
-          Elektronik kurang lama.
+          Elektronik lama.
           <br />
           <span>Langkah baru.</span>
         </h1>

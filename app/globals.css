@@ -52,6 +52,9 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: 0;
+  transform: translateZ(0);
+  will-change: transform;
+  contain: paint layout;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='300' viewBox='0 0 360 300' fill='none' stroke='%23046645' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate(35 30) rotate(-12 20 33)'%3E%3Crect width='40' height='66' rx='7'/%3E%3Cpath d='M14 7h12M7 15h26v36H7zM17 59h6'/%3E%3C/g%3E%3Cg transform='translate(205 45) rotate(10 40 28)'%3E%3Crect x='8' width='66' height='44' rx='4'/%3E%3Cpath d='M15 7h52v30H15zM8 44L0 55h82l-8-11M32 49h18'/%3E%3C/g%3E%3Cg transform='translate(105 182) rotate(14 16 24)'%3E%3Crect y='10' width='32' height='40' rx='6'/%3E%3Cpath d='M9 10V0m14 10V0M16 50v14c0 24 34 24 34 4'/%3E%3C/g%3E%3Cg transform='translate(255 185) rotate(-12 30 24)'%3E%3Cpath d='M0 10c30-28 65 14 35 29S10 76 47 63'/%3E%3Crect x='-7' y='2' width='12' height='16' rx='2'/%3E%3Cpath d='M-4 2v-6h6v6'/%3E%3Crect x='47' y='56' width='16' height='12' rx='2'/%3E%3Cpath d='M63 59h7v6h-7'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: repeat;
   background-position: center top;
@@ -67,22 +70,23 @@ body::before {
   }
 }
 
-/* Native Compositor Scroll-Driven Reveal Animations (Chrome & Edge 115+) */
-@keyframes scrollFadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(48px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* High-Performance Smooth Entrance Animation */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-@supports (animation-timeline: view()) {
+.scroll-reveal.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
   .scroll-reveal {
-    animation: scrollFadeSlideUp linear both;
-    animation-timeline: view();
-    animation-range: entry 5% cover 30%;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

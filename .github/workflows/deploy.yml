@@ -86,16 +86,22 @@ jobs:
 
             echo "==> 3. Memeriksa environment pnpm..."
             export PNPM_HOME="$HOME/.local/share/pnpm"
-            export PATH="$PNPM_HOME:$PATH:/usr/local/bin:/usr/bin:$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node 2>/dev/null | tail -n 1)/bin"
-
-            if ! command -v pnpm &> /dev/null; then
-              echo "Memasang pnpm ke ruang user..."
-              curl -fsSL https://get.pnpm.io/install.sh | SHELL="$(which bash)" bash - || true
+            NODE_BIN="$HOME/.nvm/versions/node/$(ls -1 $HOME/.nvm/versions/node 2>/dev/null | tail -n 1)/bin"
+            if [ -d "$NODE_BIN" ]; then
+              export PATH="$PNPM_HOME:$NODE_BIN:$PATH"
+            else
+              export PATH="$PNPM_HOME:$PATH"
             fi
 
-            if command -v pnpm &> /dev/null; then
+            if ! pnpm --version &> /dev/null; then
+              echo "Memperbaiki dan memasang pnpm..."
+              rm -rf "$HOME/.local/share/pnpm"
+              corepack enable 2>/dev/null || npm install -g pnpm 2>/dev/null || curl -fsSL https://get.pnpm.io/install.sh | SHELL="$(which bash)" bash - || true
+            fi
+
+            if pnpm --version &> /dev/null; then
               PNPM="pnpm"
-            elif [ -x "$HOME/.local/share/pnpm/pnpm" ]; then
+            elif [ -x "$HOME/.local/share/pnpm/pnpm" ] && "$HOME/.local/share/pnpm/pnpm" --version &> /dev/null; then
               PNPM="$HOME/.local/share/pnpm/pnpm"
             else
               PNPM="npx --yes pnpm"

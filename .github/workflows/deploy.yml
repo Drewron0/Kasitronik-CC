@@ -6,10 +6,15 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     name: Build & Validate
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout Code
@@ -54,6 +59,7 @@ jobs:
     name: Deploy to CloudPanel via SSH
     needs: build-and-test
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: github.ref == 'refs/heads/main'
 
     steps:
@@ -64,16 +70,16 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT || 22 }}
+          command_timeout: 4m
           script: |
             set -e
+            export CI=true
 
             echo "==> 1. Membuka direktori aplikasi..."
             cd ${{ secrets.TARGET_DIR }}
 
             echo "==> 2. Menarik commit terbaru..."
-            if [ -n "${{ secrets.GH_TOKEN }}" ]; then
-              git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-            fi
+            git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN || github.token }}@github.com/${{ github.repository }}.git
             git fetch origin main
             git reset --hard origin/main
 
@@ -83,7 +89,7 @@ jobs:
 
             if ! command -v pnpm &> /dev/null; then
               echo "Memasang pnpm..."
-              corepack enable || npm install -g pnpm
+              npm install -g pnpm || true
             fi
 
             echo "==> 4. Menginstal dependensi di server..."
@@ -94,7 +100,7 @@ jobs:
 
             echo "==> 6. Merestart layanan Node.js di CloudPanel..."
             if command -v pm2 &> /dev/null; then
-              pm2 reload all || pm2 restart all || pm2 start pnpm --name "kasitronik" -- start
+              pm2 reload all || pm2 restart all || true
             fi
 
             echo "==> Deployment Kasitronik ke CloudPanel Berhasil Dilakukan!"

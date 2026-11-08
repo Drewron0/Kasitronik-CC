@@ -59,7 +59,7 @@ jobs:
     name: Deploy to CloudPanel via SSH
     needs: build-and-test
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     if: github.ref == 'refs/heads/main'
 
     steps:
@@ -70,7 +70,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          command_timeout: 4m
+          command_timeout: 6m
           script: |
             set -e
             export CI=true
@@ -89,15 +89,23 @@ jobs:
             export PATH="$PNPM_HOME:$PATH:/usr/local/bin:/usr/bin:$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node 2>/dev/null | tail -n 1)/bin"
 
             if ! command -v pnpm &> /dev/null; then
-              echo "Memasang pnpm..."
-              npm install -g pnpm || true
+              echo "Memasang pnpm ke ruang user..."
+              curl -fsSL https://get.pnpm.io/install.sh | SHELL="$(which bash)" bash - || true
+            fi
+
+            if command -v pnpm &> /dev/null; then
+              PNPM="pnpm"
+            elif [ -x "$HOME/.local/share/pnpm/pnpm" ]; then
+              PNPM="$HOME/.local/share/pnpm/pnpm"
+            else
+              PNPM="npx --yes pnpm"
             fi
 
             echo "==> 4. Menginstal dependensi di server..."
-            pnpm install --frozen-lockfile
+            $PNPM install --frozen-lockfile
 
             echo "==> 5. Membangun aplikasi Next.js produksi..."
-            pnpm run build
+            $PNPM run build
 
             echo "==> 6. Merestart layanan Node.js di CloudPanel..."
             if command -v pm2 &> /dev/null; then

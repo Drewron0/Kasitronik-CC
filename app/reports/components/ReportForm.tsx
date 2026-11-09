@@ -10,6 +10,9 @@ import type { ItemDetails } from "../interfaces/item-details.interface";
 import type { ItemSuggestion } from "../interfaces/item-suggestion.interface";
 import ItemFields from "./ItemFields";
 import SuggestionPreview from "./SuggestionPreview";
+import LocationFields from "@/app/location/components/LocationFields";
+import { emptyLocation, parsePickupLocation } from "@/app/location/location";
+import type { PickupLocation } from "@/app/location/interfaces/pickup-location.interface";
 import styles from "../reports.module.css";
 
 export default function ReportForm() {
@@ -17,6 +20,7 @@ export default function ReportForm() {
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [details, setDetails] = useState<ItemDetails>({ ...emptyDetails });
+  const [location, setLocation] = useState<PickupLocation>({ ...emptyLocation });
   const [mode, setMode] = useState("manual");
   const [consent, setConsent] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
@@ -75,7 +79,12 @@ export default function ReportForm() {
       form = new FormData(); form.set("photo", photo); form.set("submissionId", crypto.randomUUID());
       for (const [key, value] of Object.entries(details)) form.set(key, value);
       form.set("confirmed", confirmed ? "yes" : "no");
-      try { parseSubmission(form); } catch (cause) { setError((cause as Error).message); return; }
+      form.set("pickupLatitude", location.coordinates ? String(location.coordinates.latitude) : "");
+      form.set("pickupLongitude", location.coordinates ? String(location.coordinates.longitude) : "");
+      form.set("pickupAddress", location.address);
+      form.set("pickupInstructions", location.instructions);
+      form.set("locationConfirmed", location.confirmed ? "yes" : "no");
+      try { parseSubmission(form); parsePickupLocation(form); } catch (cause) { setError((cause as Error).message); return; }
     }
     setPending(form); setLoading("submit");
     try { setSavedId(await submitReport(form)); setPending(null); }
@@ -110,6 +119,7 @@ export default function ReportForm() {
       </div>
       <ItemFields details={details} suggested={suggested} onChange={change} />
     </fieldset>
+    <LocationFields value={location} onChange={next => { setLocation(next); setConfirmed(false); }} disabled={Boolean(loading || pending)} signedIn={signedIn === true} />
     <div className={styles.submitArea}>
       <label className={styles.consent}><input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} disabled={Boolean(loading || pending)} required /><span>Saya sudah memeriksa detail dan kondisi barang yang akan dikirim.</span></label>
       {signedIn === false ? <div className={styles.authLinks}><Link href="/login" className={styles.button}>Masuk untuk submit</Link><Link href="/register">Daftar akun</Link></div>

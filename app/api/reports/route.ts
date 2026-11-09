@@ -1,4 +1,5 @@
 import { parseSubmission } from "@/app/reports/item-details";
+import { parsePickupLocation } from "@/app/location/location";
 import { failure, readReportRequest } from "@/lib/reports/request";
 
 export async function POST(request: Request) {
@@ -6,7 +7,7 @@ export async function POST(request: Request) {
   if (input instanceof Response) return input;
   const { client, ownerId, form, image } = input;
   let details;
-  try { details = parseSubmission(form); }
+  try { details = { ...parseSubmission(form), ...parsePickupLocation(form) }; }
   catch (error) { return failure(error instanceof Error ? error.message : "Detail tidak valid.", 400); }
   const success = () => Response.json({ id: details.id, status: "pending" }, { headers: { "Cache-Control": "no-store" } });
   const photoPath = `${ownerId}/${details.id}/photo.jpg`;

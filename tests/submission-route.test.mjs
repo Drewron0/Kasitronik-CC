@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import ts from "typescript";
 import { parseSubmission } from "../app/reports/item-details.ts";
+import { parsePickupLocation } from "../app/location/location.ts";
 
 const source = await readFile(new URL("../app/api/reports/route.ts", import.meta.url), "utf8");
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
@@ -13,6 +14,7 @@ function setup({ existing = false, uploadError = null, insertError = null, prefl
   const calls = { uploads: [], inserts: [], removals: [] };
   let reads = 0;
   const form = new FormData();
+  for (const [key, value] of Object.entries({ pickupLatitude: "-7.25", pickupLongitude: "112.75", pickupAddress: "Alamat pengujian", pickupInstructions: "Gerbang depan", locationConfirmed: "yes" })) form.set(key, value);
   for (const [key, value] of Object.entries({ submissionId: id, category: "phones", itemName: "Ponsel", condition: "dead", quantity: "1", weightKind: "unknown", confirmed: "yes", owner_id: "forged", status: "approved" })) form.set(key, value);
   const client = {
     from(table) {
@@ -36,6 +38,7 @@ function setup({ existing = false, uploadError = null, insertError = null, prefl
   const exports = {};
   const dependencies = {
     "@/app/reports/item-details": { parseSubmission },
+    "@/app/location/location": { parsePickupLocation },
     "@/lib/reports/request": {
       readReportRequest: async () => ({ client, ownerId, form, image: Buffer.from("normalized JPEG") }),
       failure: (error, status) => Response.json({ error }, { status }),
@@ -52,6 +55,8 @@ test("submission stores normalized photo and authenticated owner with pending st
   assert.deepEqual(await response.json(), { id, status: "pending" });
   assert.equal(calls.inserts[0].owner_id, ownerId);
   assert.equal(calls.inserts[0].status, "pending");
+  assert.equal(calls.inserts[0].pickup_latitude, -7.25);
+  assert.equal(calls.inserts[0].pickup_longitude, 112.75);
   assert.equal(calls.inserts[0].photo_path, `${ownerId}/${id}/photo.jpg`);
   assert.deepEqual(calls.uploads[0].options, { contentType: "image/jpeg", upsert: false });
   assert.equal(calls.removals.length, 0);

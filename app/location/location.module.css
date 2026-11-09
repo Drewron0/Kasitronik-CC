@@ -1,0 +1,28 @@
+.section { display: flex; flex-direction: column; gap: 12px; border: 0; border-top: 1px solid var(--border); padding: 24px 0 0; margin: 32px 0 0; min-width: 0; }
+.section legend { font-size: 20px; font-weight: 600; padding: 0 12px 0 0; }
+.section label { font-size: 14px; font-weight: 600; }
+.section input:not([type="checkbox"]), .section textarea { width: 100%; min-width: 0; min-height: 48px; border: 1px solid var(--border); border-radius: 8px; background: var(--canvas); color: var(--ink); padding: 12px; font: inherit; font-size: 16px; }
+.section textarea { resize: vertical; }
+.section :is(input, textarea, button, a):focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.secondary { min-height: 44px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 24px; background: var(--surface); color: var(--green); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; align-self: flex-start; }
+.secondary:hover:not(:disabled) { background: var(--sage); }
+.secondary:active:not(:disabled) { background: var(--border); }
+.section button:disabled, .section input:disabled { opacity: .6; cursor: not-allowed; }
+.map { height: 360px; width: 100%; border: 1px solid var(--border); border-radius: 12px; z-index: 0; background: var(--sage); }
+.map :global(.leaflet-control-attribution) { font-size: 11px; background: white; }
+.map :global(.leaflet-control-zoom a) { width: 44px; height: 44px; line-height: 44px; }
+.pin { display: flex; align-items: center; justify-content: center; border: 3px solid white; border-radius: 50%; background: var(--green); box-shadow: 0 1px 5px #1c262180; }
+.pin span { width: 6px; height: 6px; border-radius: 50%; background: white; }
+.results { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.results li + li { border-top: 1px solid var(--border); }
+.results button { width: 100%; min-height: 44px; padding: 12px; text-align: left; border: 0; background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; overflow-wrap: anywhere; }
+.results button:hover, .results button:focus-visible { background: var(--sage); }
+.results button:active { background: var(--border); }
+.section .confirm { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 14px; font-weight: 400; cursor: pointer; }
+.confirm input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--green); }
+.error { margin: 0; color: #a12d24; font-size: 14px; line-height: 1.6; }
+.status, .coordinates { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.status:empty { display: none; }
+.attribution { color: var(--muted); font-size: 12px; align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; }
+@media (max-width: 480px) { .map { height: 300px; } }

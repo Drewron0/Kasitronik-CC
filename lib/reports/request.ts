@@ -1,5 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
 import "server-only";
+import { requestUser } from "@/lib/auth/request-user";
 import { MAX_IMAGE_BYTES } from "@/app/reports/item-details";
 import { normalizeImage } from "@/lib/ai/image";
 import { takeAssessmentSlot } from "@/lib/ai/rate-limit";
@@ -9,30 +9,11 @@ export function failure(error: string, status: number) {
 }
 
 export async function readReportRequest(request: Request, purpose: "suggest" | "submit") {
-  const token = request.headers.get("authorization")?.match(/^Bearer (\S+)$/i)?.[1];
-  if (!token) return failure("Masuk terlebih dahulu untuk submit barang.", 401);
-
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) {
-    return failure("Supabase belum dikonfigurasi. Hubungi pengelola.", 503);
-  }
-
-  const client = createClient(url, key, {
-      auth: { persistSession: false, autoRefreshToken: false },
-      global: { headers: { Authorization: `Bearer ${token}` }, fetch: (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(20_000) }) },
-    });
-  let ownerId: string;
-  try {
-    const { data, error } = await client.auth.getUser(token);
-    if (error || !data.user) return failure("Sesi berakhir. Silakan masuk kembali.", 401);
-    ownerId = data.user.id;
-    if (!takeAssessmentSlot(`${purpose}:${ownerId}`)) {
-      return failure("Batas 5 percobaan per 10 menit tercapai. Coba lagi nanti.", 429);
-    }
-  } catch {
-    return failure("Tidak dapat memverifikasi akun. Coba lagi.", 503);
-  }
+  const auth = await requestUser(request);
+  if (auth.error) return failure(auth.error, auth.status);
+  const { client, ownerId } = auth;
+  if (!client || !ownerId) return failure("Tidak dapat memverifikasi akun. Coba lagi.", 503);
+  if (!takeAssessmentSlot(`${purpose}:${ownerId}`)) return failure("Batas 5 percobaan per 10 menit tercapai. Coba lagi nanti.", 429);
 
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.startsWith("multipart/form-data")) return failure("Format kiriman tidak sesuai.", 400);

@@ -53,12 +53,12 @@ export default function Header({
           </nav>
         ) : (
           <nav className={styles.nav} aria-label="Navigasi utama">
-            <a href="#alur" className={`${styles.navLink} ${styles.desktopOnly}`}>
+            <Link href="/#alur" className={`${styles.navLink} ${styles.desktopOnly}`}>
               Cara kerja
-            </a>
-            <a href="#persiapan" className={`${styles.navLink} ${styles.desktopOnly}`}>
+            </Link>
+            <Link href="/#persiapan" className={`${styles.navLink} ${styles.desktopOnly}`}>
               Panduan
-            </a>
+            </Link>
             <AccountNav />
           </nav>
         )}

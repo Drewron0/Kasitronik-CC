@@ -14,7 +14,7 @@ export async function loginAction(payload: LoginPayload): Promise<LoginResult> {
         success: false,
         error:
           error.code === "email_not_confirmed"
-            ? "Konfirmasi email terlebih dahulu sebelum masuk."
+            ? "Email belum dikonfirmasi. Nonaktifkan opsi 'Confirm email' di dashboard Supabase untuk langsung masuk tanpa email."
             : "Login gagal. Periksa email dan kata sandi, lalu coba lagi.",
       };
     }

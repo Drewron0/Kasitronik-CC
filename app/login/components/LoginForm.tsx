@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
 import { loginAction } from "../actions/login.action";
@@ -13,6 +13,10 @@ export default function LoginForm() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const isRegistered = searchParams.get("registered") === "true";
+  const redirectTo = searchParams.get("redirectTo");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,7 +37,7 @@ export default function LoginForm() {
       return;
     }
 
-    router.replace("/");
+    router.replace(redirectTo || "/");
   }
 
   return (
@@ -43,6 +47,25 @@ export default function LoginForm() {
         <h2 id="login-title">Selamat datang kembali</h2>
         <p>Masukkan email dan kata sandi untuk masuk.</p>
       </div>
+
+      {isRegistered && !message && (
+        <div
+          role="status"
+          style={{
+            marginBottom: "20px",
+            padding: "12px 16px",
+            background: "var(--sage, #e8f2e8)",
+            border: "1px solid var(--border, #e1e7de)",
+            borderRadius: "10px",
+            color: "var(--green, #046645)",
+            fontSize: "13px",
+            fontWeight: 500,
+            lineHeight: 1.5,
+          }}
+        >
+          Pendaftaran berhasil. Silakan masukkan email dan kata sandi Anda untuk masuk.
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.field}>

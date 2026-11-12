@@ -195,11 +195,13 @@ export default function DashboardView() {
         <div className={styles.cardsList}>
           {[1, 2, 3].map((n) => (
             <div key={n} className={styles.skeletonCard}>
-              <div className={styles.skeletonThumbnail} />
-              <div className={styles.skeletonLines}>
-                <div className={styles.skeletonLine} style={{ width: "25%" }} />
-                <div className={styles.skeletonLine} style={{ width: "65%", height: 16 }} />
-                <div className={styles.skeletonLine} style={{ width: "35%" }} />
+              <div className={styles.cardMain}>
+                <div className={styles.skeletonThumbnail} />
+                <div className={styles.skeletonLines}>
+                  <div className={styles.skeletonLine} style={{ width: "25%" }} />
+                  <div className={styles.skeletonLine} style={{ width: "65%", height: 16 }} />
+                  <div className={styles.skeletonLine} style={{ width: "35%" }} />
+                </div>
               </div>
             </div>
           ))}
@@ -211,6 +213,7 @@ export default function DashboardView() {
               key={item.id}
               item={item}
               onClick={setSelectedDetailItem}
+              onCancel={setCancelTargetItem}
             />
           ))}
         </div>

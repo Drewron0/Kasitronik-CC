@@ -161,11 +161,10 @@
   gap: 16px;
 }
 
-/* Card: Large image, clean text (no alert boxes), and status timeline */
+/* Card: Large image, clean text (no alert boxes), status timeline, and bottom actions */
 .card {
   display: flex;
-  align-items: stretch;
-  gap: 24px;
+  flex-direction: column;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -184,6 +183,12 @@
 .card:focus-visible {
   outline: 3px solid var(--green);
   outline-offset: 3px;
+}
+
+.cardMain {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
 }
 
 /* Large prominent thumbnail */
@@ -258,6 +263,16 @@
   margin-top: auto;
   padding-top: 6px;
   width: 100%;
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
 }
 
 /* Stepper Component */
@@ -672,8 +687,12 @@
 
 @media (max-width: 640px) {
   .card {
-    flex-direction: column;
     padding: 16px;
+    gap: 16px;
+  }
+
+  .cardMain {
+    flex-direction: column;
     gap: 16px;
   }
 
@@ -684,6 +703,16 @@
 
   .cardTimeline {
     padding-top: 10px;
+  }
+
+  .cardActions {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .cardActions .actionButton {
+    flex: 1;
+    justify-content: center;
   }
 
   .stepLabel {

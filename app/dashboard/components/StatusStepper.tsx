@@ -1,4 +1,5 @@
 import type { SubmissionStatus } from "../interfaces/submission-status.type";
+import { STATUS_LABELS } from "../utils/formatters";
 import styles from "../dashboard.module.css";
 
 interface StatusStepperProps {
@@ -6,10 +7,10 @@ interface StatusStepperProps {
 }
 
 const STEPS: { key: SubmissionStatus; label: string; stepNumber: number }[] = [
-  { key: "pending", label: "Diumumkan", stepNumber: 1 },
-  { key: "accepted", label: "Diterima", stepNumber: 2 },
-  { key: "picked_up", label: "Diambil", stepNumber: 3 },
-  { key: "completed", label: "Selesai", stepNumber: 4 },
+  { key: "pending", label: STATUS_LABELS.pending, stepNumber: 1 },
+  { key: "accepted", label: STATUS_LABELS.accepted, stepNumber: 2 },
+  { key: "picked_up", label: STATUS_LABELS.picked_up, stepNumber: 3 },
+  { key: "completed", label: STATUS_LABELS.completed, stepNumber: 4 },
 ];
 
 function getStepIndex(status: SubmissionStatus): number {
@@ -54,7 +55,13 @@ export default function StatusStepper({ status }: StatusStepperProps) {
   const currentIndex = getStepIndex(status);
 
   return (
-    <div className={styles.stepper} role="progressbar" aria-valuenow={currentIndex + 1} aria-valuemin={1} aria-valuemax={4}>
+    <div
+      className={styles.stepper}
+      role="progressbar"
+      aria-valuenow={currentIndex + 1}
+      aria-valuemin={1}
+      aria-valuemax={4}
+    >
       {/* Background track line */}
       <div
         className={styles.stepLine}

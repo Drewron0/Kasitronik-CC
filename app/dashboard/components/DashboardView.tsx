@@ -195,15 +195,12 @@ export default function DashboardView() {
         <div className={styles.cardsList}>
           {[1, 2, 3].map((n) => (
             <div key={n} className={styles.skeletonCard}>
-              <div className={styles.skeletonRow}>
-                <div className={styles.skeletonThumbnail} />
-                <div className={styles.skeletonLines}>
-                  <div className={styles.skeletonLine} style={{ width: "40%" }} />
-                  <div className={styles.skeletonLine} style={{ width: "70%" }} />
-                  <div className={styles.skeletonLine} style={{ width: "55%" }} />
-                </div>
+              <div className={styles.skeletonThumbnail} />
+              <div className={styles.skeletonLines}>
+                <div className={styles.skeletonLine} style={{ width: "25%" }} />
+                <div className={styles.skeletonLine} style={{ width: "65%", height: 16 }} />
+                <div className={styles.skeletonLine} style={{ width: "35%" }} />
               </div>
-              <div className={styles.skeletonLine} style={{ width: "100%", height: 24, marginTop: 8 }} />
             </div>
           ))}
         </div>
@@ -213,8 +210,7 @@ export default function DashboardView() {
             <SubmissionCard
               key={item.id}
               item={item}
-              onViewDetail={setSelectedDetailItem}
-              onCancel={setCancelTargetItem}
+              onClick={setSelectedDetailItem}
             />
           ))}
         </div>

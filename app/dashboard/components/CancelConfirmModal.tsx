@@ -75,9 +75,9 @@ export default function CancelConfirmModal({
         </div>
 
         <div className={styles.modalBody}>
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--muted, #59665d)" }}>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--muted)" }}>
             Apakah Anda yakin ingin membatalkan laporan penjemputan untuk{" "}
-            <strong style={{ color: "var(--ink, #1c2621)" }}>{itemName}</strong>?
+            <strong style={{ color: "var(--ink)" }}>{itemName}</strong>?
             Tindakan ini tidak dapat dibatalkan kembali.
           </p>
         </div>

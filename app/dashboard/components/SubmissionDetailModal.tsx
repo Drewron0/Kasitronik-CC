@@ -77,10 +77,12 @@ export default function SubmissionDetailModal({
         </div>
 
         <div className={styles.modalBody}>
-          {/* Progress / Status */}
-          <StatusStepper status={item.status} />
+          {/* Progress / Status Section */}
+          <div className={styles.modalStepperSection}>
+            <StatusStepper status={item.status} />
+          </div>
 
-          {/* Photo Preview */}
+          {/* Photo Preview if available */}
           {item.photo_url && !isImgError ? (
             <div className={styles.modalPhotoWrapper}>
               <Image
@@ -88,22 +90,17 @@ export default function SubmissionDetailModal({
                 alt={item.item_name}
                 fill
                 className={styles.thumbnailImage}
-                sizes="(max-width: 600px) 100vw, 560px"
+                sizes="(max-width: 640px) 100vw, 520px"
                 onError={() => setFailedPhotoId(item.id)}
               />
             </div>
           ) : null}
 
-          {/* Key Details */}
+          {/* Key Specifications Grid */}
           <div className={styles.detailGrid}>
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>Nama Barang</span>
               <span className={styles.detailValue}>{item.item_name}</span>
-            </div>
-
-            <div className={styles.detailItem}>
-              <span className={styles.detailLabel}>Merek / Tipe</span>
-              <span className={styles.detailValue}>{item.brand_model || "-"}</span>
             </div>
 
             <div className={styles.detailItem}>
@@ -112,46 +109,54 @@ export default function SubmissionDetailModal({
             </div>
 
             <div className={styles.detailItem}>
-              <span className={styles.detailLabel}>Kondisi</span>
+              <span className={styles.detailLabel}>Kondisi Barang</span>
               <span className={styles.detailValue}>{formatCondition(item.condition)}</span>
             </div>
 
             <div className={styles.detailItem}>
-              <span className={styles.detailLabel}>Jumlah</span>
-              <span className={styles.detailValue}>{item.quantity} Unit</span>
+              <span className={styles.detailLabel}>Jumlah & Estimasi Berat</span>
+              <span className={styles.detailValue}>
+                {item.quantity} Unit • {formatWeight(item)}
+              </span>
             </div>
 
             <div className={styles.detailItem}>
-              <span className={styles.detailLabel}>Estimasi Berat</span>
-              <span className={styles.detailValue}>{formatWeight(item)}</span>
-            </div>
-
-            <div className={styles.detailItemFull}>
               <span className={styles.detailLabel}>Tanggal Dilaporkan</span>
               <span className={styles.detailValue}>{formatDate(item.created_at)}</span>
             </div>
 
-            {item.pickup_address ? (
-              <div className={styles.detailItemFull}>
-                <span className={styles.detailLabel}>Lokasi Penjemputan</span>
-                <span className={styles.detailValue}>{item.pickup_address}</span>
-              </div>
-            ) : null}
-
-            {item.pickup_instructions ? (
-              <div className={styles.detailItemFull}>
-                <span className={styles.detailLabel}>Patokan / Catatan Lokasi</span>
-                <span className={styles.detailValue}>{item.pickup_instructions}</span>
-              </div>
-            ) : null}
-
-            {item.notes ? (
-              <div className={styles.detailItemFull}>
-                <span className={styles.detailLabel}>Catatan Tambahan</span>
-                <span className={styles.detailValue}>{item.notes}</span>
+            {item.brand_model ? (
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Merek / Tipe</span>
+                <span className={styles.detailValue}>{item.brand_model}</span>
               </div>
             ) : null}
           </div>
+
+          {/* Pickup Address & Instructions */}
+          {item.pickup_address ? (
+            <div className={styles.infoBox}>
+              <span className={styles.detailLabel}>Lokasi Penjemputan</span>
+              <span className={styles.detailValue} style={{ fontWeight: 500 }}>
+                {item.pickup_address}
+              </span>
+              {item.pickup_instructions ? (
+                <span style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>
+                  Patokan: {item.pickup_instructions}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+
+          {/* Additional Notes */}
+          {item.notes ? (
+            <div className={styles.infoBox}>
+              <span className={styles.detailLabel}>Catatan Tambahan</span>
+              <span style={{ fontSize: 14, color: "var(--ink)", lineHeight: 1.5 }}>
+                {item.notes}
+              </span>
+            </div>
+          ) : null}
         </div>
 
         <div className={styles.modalFooter}>

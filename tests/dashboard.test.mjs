@@ -3,21 +3,27 @@ import assert from "node:assert/strict";
 import {
   formatCategory,
   formatCondition,
+  formatStatus,
   formatWeight,
   formatDate,
   CATEGORY_LABELS,
   CONDITION_LABELS,
+  STATUS_LABELS,
 } from "../app/dashboard/utils/formatters.ts";
 
-test("dashboard formatters handle known categories and conditions", () => {
+test("dashboard formatters handle known categories, conditions, and statuses", () => {
   for (const [key, label] of Object.entries(CATEGORY_LABELS)) {
     assert.equal(formatCategory(key), label);
   }
   for (const [key, label] of Object.entries(CONDITION_LABELS)) {
     assert.equal(formatCondition(key), label);
   }
+  for (const [key, label] of Object.entries(STATUS_LABELS)) {
+    assert.equal(formatStatus(key), label);
+  }
   assert.equal(formatCategory("unknown_cat"), "unknown_cat");
   assert.equal(formatCondition("unknown_cond"), "unknown_cond");
+  assert.equal(formatStatus("unknown_status"), "unknown_status");
 });
 
 test("dashboard formatWeight formats actual, estimate, and unknown weights", () => {

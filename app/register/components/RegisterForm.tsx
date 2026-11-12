@@ -2,12 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
 import { registerAction } from "../actions/register.action";
 import styles from "../../login/login.module.css";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -29,7 +31,6 @@ export default function RegisterForm() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const confirmation = String(formData.get("confirmation") ?? "");
@@ -41,12 +42,7 @@ export default function RegisterForm() {
     }
 
     if (!isPasswordSecure) {
-      const missing: string[] = [];
-      if (!hasMinLength) missing.push("min. 8 karakter");
-      if (!hasUpperCase) missing.push("huruf besar (A-Z)");
-      if (!hasNumber) missing.push("angka (0-9)");
-      if (!hasSymbol) missing.push("simbol");
-      setMessage(`Kata sandi belum aman. Perlu: ${missing.join(", ")}.`);
+      setMessage("Kata sandi belum memenuhi kriteria keamanan.");
       setIsError(true);
       return;
     }
@@ -68,10 +64,14 @@ export default function RegisterForm() {
       return;
     }
 
-    setMessage(result.message ?? "Pendaftaran berhasil.");
+    setMessage(result.message ?? "Pendaftaran berhasil. Mengarahkan ke halaman masuk...");
     setIsError(false);
     setPassword("");
     form.reset();
+
+    setTimeout(() => {
+      router.push("/login?registered=true");
+    }, 700);
   }
 
   return (

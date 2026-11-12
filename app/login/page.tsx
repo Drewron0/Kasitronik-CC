@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -17,7 +18,9 @@ export default function LoginPage() {
 
       <div className={styles.content}>
         <LoginIntro />
-        <LoginForm />
+        <Suspense fallback={<div className={styles.card}>Memuat formulir...</div>}>
+          <LoginForm />
+        </Suspense>
       </div>
 
       <Footer showBackToTop={false} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import type { SubmissionItem } from "../interfaces/submission-item.interface";
 import { formatCategory, formatCondition, formatDate, formatWeight } from "../utils/formatters";
@@ -18,19 +19,21 @@ export default function SubmissionCard({
   onCancel,
 }: SubmissionCardProps) {
   const isPending = item.status === "pending";
+  const [imgError, setImgError] = useState(false);
 
   return (
     <article className={styles.card} aria-labelledby={`card-title-${item.id}`}>
       <div className={styles.cardMain}>
         {/* Thumbnail */}
         <div className={styles.cardThumbnail}>
-          {item.photo_url ? (
+          {item.photo_url && !imgError ? (
             <Image
               src={item.photo_url}
               alt={item.item_name}
               fill
               className={styles.thumbnailImage}
               sizes="(max-width: 640px) 100vw, 108px"
+              onError={() => setImgError(true)}
             />
           ) : (
             <div className={styles.thumbnailPlaceholder} aria-hidden="true">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { SubmissionItem } from "../interfaces/submission-item.interface";
 import { formatCategory, formatCondition, formatDate, formatWeight } from "../utils/formatters";
@@ -18,6 +18,9 @@ export default function SubmissionDetailModal({
   onClose,
   onRequestCancel,
 }: SubmissionDetailModalProps) {
+  const [failedPhotoId, setFailedPhotoId] = useState<string | null>(null);
+  const isImgError = item ? failedPhotoId === item.id : false;
+
   useEffect(() => {
     if (!item) return;
 
@@ -78,7 +81,7 @@ export default function SubmissionDetailModal({
           <StatusStepper status={item.status} />
 
           {/* Photo Preview */}
-          {item.photo_url ? (
+          {item.photo_url && !isImgError ? (
             <div className={styles.modalPhotoWrapper}>
               <Image
                 src={item.photo_url}
@@ -86,6 +89,7 @@ export default function SubmissionDetailModal({
                 fill
                 className={styles.thumbnailImage}
                 sizes="(max-width: 600px) 100vw, 560px"
+                onError={() => setFailedPhotoId(item.id)}
               />
             </div>
           ) : null}

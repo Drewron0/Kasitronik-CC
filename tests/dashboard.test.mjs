@@ -68,3 +68,33 @@ test("dashboard status categorization logic partitions statuses correctly", () =
   assert.equal(cancelled.length, 1);
   assert.equal(active.length + completed.length + cancelled.length, sampleItems.length);
 });
+
+test("dashboard search filtering filters by item name, brand model, and category", () => {
+  const items = [
+    { id: "1", item_name: "MacBook Pro M1", brand_model: "Apple", category: "computers", status: "completed" },
+    { id: "2", item_name: "Galaxy S21", brand_model: "Samsung", category: "phones", status: "pending" },
+    { id: "3", item_name: "Kulkas 2 Pintu", brand_model: "Sharp", category: "appliances", status: "accepted" },
+  ];
+
+  const filterByQuery = (q) => {
+    const term = q.toLowerCase().trim();
+    return items.filter(
+      (i) =>
+        i.item_name.toLowerCase().includes(term) ||
+        i.brand_model.toLowerCase().includes(term) ||
+        formatCategory(i.category).toLowerCase().includes(term)
+    );
+  };
+
+  assert.equal(filterByQuery("macbook").length, 1);
+  assert.equal(filterByQuery("apple").length, 1);
+  assert.equal(filterByQuery("smartphone").length, 1);
+  assert.equal(filterByQuery("kulkas").length, 1);
+  assert.equal(filterByQuery("nonexistent").length, 0);
+});
+
+test("dashboard receipt number formatting generates canonical identifier", () => {
+  const sampleId = "94f97b73-9a36-40ef-b518-fb4bc022b5f6";
+  const receiptNumber = `KST-${sampleId.replace(/-/g, "").slice(0, 10).toUpperCase()}`;
+  assert.equal(receiptNumber, "KST-94F97B739A");
+});

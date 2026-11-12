@@ -154,6 +154,114 @@
   color: var(--green);
 }
 
+/* Controls Row: Search Input & Refresh Button */
+.controlsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.searchContainer {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 40px 10px 42px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(4, 102, 69, 0.15);
+}
+
+.searchInput::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.searchClearButton {
+  position: absolute;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: var(--sage-tint);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.searchClearButton:hover {
+  background: var(--border);
+  color: var(--ink);
+}
+
+.refreshButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.refreshButton:hover:not(:disabled) {
+  background: var(--sage-tint);
+  color: var(--green);
+  border-color: var(--border-hover);
+}
+
+.refreshButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refreshButtonSpinning svg {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Cards List */
 .cardsList {
   display: flex;
@@ -585,6 +693,191 @@
   flex-direction: column;
   gap: 8px;
   margin: 0;
+}
+
+.collectorContactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--sage-tint);
+  border: 1px solid var(--border);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.collectorContactLink:hover {
+  background: var(--sage);
+  border-color: var(--green);
+}
+
+/* Receipt Paper & Modal */
+.receiptModal {
+  width: min(640px, 100%);
+}
+
+.receiptPaper {
+  background: var(--surface);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.receiptHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.receiptBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.receiptBrandTitle {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.receiptBrandSubtitle {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.receiptMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.receiptNumber {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.05em;
+}
+
+.receiptDate {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.receiptDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+.receiptDocumentHeading {
+  text-align: center;
+  padding: 4px 0;
+}
+
+.receiptDocumentHeading h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.receiptDocumentHeading p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.receiptTable {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--canvas);
+}
+
+.receiptRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.receiptRow:last-child {
+  border-bottom: none;
+}
+
+.receiptColLabel {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.receiptColValue {
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.receiptVerifiedText {
+  color: var(--green);
+}
+
+.receiptSealBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--sage-tint);
+  border: 1px solid var(--sage);
+  border-radius: 10px;
+  color: var(--green);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.receiptSealBox strong {
+  display: block;
+  font-size: 13px;
+  color: var(--green-hover);
+  margin-bottom: 2px;
+}
+
+.receiptSealBox span {
+  color: var(--muted);
+}
+
+/* Print Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt,
+  #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: #ffffff !important;
+  }
 }
 
 .modalFooter {

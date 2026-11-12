@@ -21,4 +21,6 @@ export interface SubmissionItem {
   pickup_longitude: number | null;
   pickup_address: string | null;
   pickup_instructions: string | null;
+  collector_name: string | null;
+  collector_phone: string | null;
 }

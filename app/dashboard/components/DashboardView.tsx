@@ -150,7 +150,7 @@ export default function DashboardView() {
 
       {/* Action Error Alert if any */}
       {actionError ? (
-        <div className={styles.cancelledBanner} style={{ marginBottom: 20 }}>
+        <div className={styles.errorBanner}>
           <svg
             width="16"
             height="16"

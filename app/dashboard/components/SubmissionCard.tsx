@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { SubmissionItem } from "../interfaces/submission-item.interface";
-import { formatCategory, formatDate, formatStatus } from "../utils/formatters";
+import { formatCategory, formatDate } from "../utils/formatters";
+import StatusStepper from "./StatusStepper";
 import styles from "../dashboard.module.css";
 
 interface SubmissionCardProps {
@@ -31,7 +32,7 @@ export default function SubmissionCard({
       role="button"
       aria-label={`Lihat detail laporan untuk ${item.item_name}`}
     >
-      {/* 1. Gambar */}
+      {/* Gambar Thumbnail Besar */}
       <div className={styles.cardThumbnail}>
         {item.photo_url && !imgError ? (
           <Image
@@ -39,14 +40,14 @@ export default function SubmissionCard({
             alt={item.item_name}
             fill
             className={styles.thumbnailImage}
-            sizes="(max-width: 640px) 68px, 80px"
+            sizes="(max-width: 640px) 100vw, 136px"
             onError={() => setImgError(true)}
           />
         ) : (
           <div className={styles.thumbnailPlaceholder} aria-hidden="true">
             <svg
-              width="24"
-              height="24"
+              width="36"
+              height="36"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -62,42 +63,25 @@ export default function SubmissionCard({
         )}
       </div>
 
-      {/* Content: Kategori, Tanggal, Nama, Status */}
+      {/* Content: Kategori, Tanggal, Nama, Timeline Status */}
       <div className={styles.cardContent}>
-        <div className={styles.cardTopRow}>
-          {/* 2. Kategori */}
-          <span className={styles.categoryBadge}>
+        <div className={styles.cardMetaRow}>
+          <span className={styles.categoryText}>
             {formatCategory(item.category)}
           </span>
-          {/* 3. Tanggal */}
+          <span className={styles.metaDivider} aria-hidden="true">
+            •
+          </span>
           <time className={styles.dateLabel} dateTime={item.created_at}>
             {formatDate(item.created_at)}
           </time>
         </div>
 
-        {/* 4. Nama */}
         <h3 className={styles.cardTitle}>{item.item_name}</h3>
 
-        {/* 5. Status */}
-        <div className={styles.cardBottomRow}>
-          <span className={`${styles.statusBadge} ${styles[`status_${item.status}`]}`}>
-            <span className={styles.statusDot} aria-hidden="true" />
-            {formatStatus(item.status)}
-          </span>
-          <span className={styles.cardChevron} aria-hidden="true">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </span>
+        {/* Timeline Status */}
+        <div className={styles.cardTimeline}>
+          <StatusStepper status={item.status} />
         </div>
       </div>
     </article>

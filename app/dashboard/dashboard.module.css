@@ -13,8 +13,6 @@
   --destructive-hover: #87241c;
   --destructive-surface: #fdf2f2;
   --destructive-border: #fca5a5;
-  --info: #1b628b;
-  --info-surface: #edf6fb;
 
   min-height: 100vh;
   display: flex;
@@ -160,18 +158,18 @@
 .cardsList {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
-/* Card: Clean, minimal, non-overloaded */
+/* Card: Large image, clean text (no alert boxes), and status timeline */
 .card {
   display: flex;
-  align-items: center;
-  gap: 18px;
+  align-items: stretch;
+  gap: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 20px;
+  border-radius: 16px;
+  padding: 20px 24px;
   cursor: pointer;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
   text-align: left;
@@ -179,7 +177,7 @@
 
 .card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 6px 20px rgba(28, 38, 33, 0.06);
+  box-shadow: 0 6px 24px rgba(28, 38, 33, 0.06);
   transform: translateY(-1px);
 }
 
@@ -188,13 +186,14 @@
   outline-offset: 3px;
 }
 
+/* Large prominent thumbnail */
 .cardThumbnail {
   position: relative;
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
+  width: 136px;
+  height: 136px;
+  border-radius: 12px;
   overflow: hidden;
-  background: var(--sage-tint);
+  background: var(--canvas);
   border: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -217,122 +216,48 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
-.cardTopRow {
+/* Kategori • Tanggal: Clean typography, no background box / alert styling */
+.cardMetaRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: 4px;
 }
 
-.categoryBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
+.categoryText {
   font-weight: 600;
-  background: var(--sage);
   color: var(--green);
-  letter-spacing: 0.02em;
+}
+
+.metaDivider {
+  color: var(--border);
+  font-weight: 700;
 }
 
 .dateLabel {
-  font-size: 12px;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .cardTitle {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--ink);
   line-height: 1.35;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
-.cardBottomRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 2px;
-}
-
-.statusBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-.status_pending {
-  background: var(--sage);
-  color: var(--green);
-}
-.status_pending .statusDot {
-  background: var(--green);
-}
-
-.status_accepted {
-  background: var(--info-surface);
-  color: var(--info);
-}
-.status_accepted .statusDot {
-  background: var(--info);
-}
-
-.status_picked_up {
-  background: var(--sage);
-  color: var(--green);
-}
-.status_picked_up .statusDot {
-  background: var(--green);
-}
-
-.status_completed {
-  background: var(--sage);
-  color: var(--green-hover);
-}
-.status_completed .statusDot {
-  background: var(--green-hover);
-}
-
-.status_cancelled {
-  background: var(--destructive-surface);
-  color: var(--destructive);
-}
-.status_cancelled .statusDot {
-  background: var(--destructive);
-}
-
-.cardChevron {
-  color: var(--muted);
-  opacity: 0.6;
-  display: flex;
-  align-items: center;
-  transition: transform 0.15s ease, opacity 0.15s ease, color 0.15s ease;
-}
-
-.card:hover .cardChevron {
-  color: var(--green);
-  opacity: 1;
-  transform: translateX(3px);
+.cardTimeline {
+  margin-top: auto;
+  padding-top: 6px;
+  width: 100%;
 }
 
 /* Stepper Component */
@@ -346,6 +271,7 @@
   justify-content: space-between;
   position: relative;
   width: 100%;
+  padding-inline: 4px;
 }
 
 .stepItem {
@@ -358,13 +284,13 @@
 }
 
 .stepCircle {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   background: var(--surface);
   border: 2px solid var(--border);
@@ -400,7 +326,7 @@
 
 .stepLine {
   position: absolute;
-  top: 14px;
+  top: 13px;
   height: 2px;
   background: var(--border);
   z-index: 1;
@@ -411,8 +337,26 @@
   background: var(--green);
 }
 
-/* Cancelled Banner */
-.cancelledBanner {
+/* Subtle cancelled state (no box alert) */
+.cancelledStatusLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 4px 0;
+}
+
+.cancelledDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+/* Dynamic Error Banner */
+.errorBanner {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -423,6 +367,7 @@
   color: var(--destructive);
   font-size: 13px;
   font-weight: 500;
+  margin-bottom: 20px;
 }
 
 /* Action Buttons */
@@ -568,8 +513,8 @@
 .modalStepperSection {
   background: var(--canvas);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 16px;
+  border-radius: 14px;
+  padding: 20px 24px;
   margin: 0;
 }
 
@@ -579,7 +524,7 @@
   height: 240px;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--sage-tint);
+  background: var(--canvas);
   border: 1px solid var(--border);
   margin: 0;
 }
@@ -663,17 +608,17 @@
 .skeletonCard {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 20px;
+  border-radius: 16px;
+  padding: 20px 24px;
   display: flex;
-  align-items: center;
-  gap: 18px;
+  align-items: stretch;
+  gap: 24px;
 }
 
 .skeletonThumbnail {
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
+  width: 136px;
+  height: 136px;
+  border-radius: 12px;
   background: linear-gradient(90deg, var(--sage-tint) 25%, var(--sage) 50%, var(--sage-tint) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -684,7 +629,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  justify-content: center;
 }
 
 .skeletonLine {
@@ -726,13 +672,22 @@
 
 @media (max-width: 640px) {
   .card {
-    padding: 14px 16px;
-    gap: 14px;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
   }
 
   .cardThumbnail {
-    width: 68px;
-    height: 68px;
+    width: 100%;
+    height: 180px;
+  }
+
+  .cardTimeline {
+    padding-top: 10px;
+  }
+
+  .stepLabel {
+    font-size: 10px;
   }
 
   .modal {
@@ -749,11 +704,11 @@
     gap: 20px;
   }
 
-  .detailItem {
-    flex: 1 1 100%;
+  .modalStepperSection {
+    padding: 16px 12px;
   }
 
-  .stepLabel {
-    font-size: 10px;
+  .detailItem {
+    flex: 1 1 100%;
   }
 }

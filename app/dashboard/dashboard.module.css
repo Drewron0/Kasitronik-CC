@@ -580,7 +580,7 @@
 
 .modal {
   width: min(580px, 100%);
-  max-height: min(90vh, 820px);
+  max-height: min(88vh, 760px);
   margin: auto;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -631,11 +631,15 @@
 }
 
 .modalBody {
-  padding: 28px;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 24px 28px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .modalStepperSection {
@@ -694,20 +698,14 @@
 /* Receipt Paper & Modal */
 .receiptModal {
   width: min(640px, 100%);
-  max-height: min(90vh, 820px);
+  max-height: min(88vh, 760px);
 }
 
 .receiptPaper {
   background: var(--surface);
-  padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
 }
 
 .receiptHeader {

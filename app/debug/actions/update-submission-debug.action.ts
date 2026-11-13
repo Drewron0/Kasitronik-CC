@@ -47,10 +47,29 @@ export async function updateSubmissionDebugAction(
       updateFields.rated_at = null;
     }
 
-    const { error } = await supabase
+    let { error } = await supabase
       .from("item_submissions")
       .update(updateFields)
       .eq("id", payload.submissionId);
+
+    // If failed because optional columns (collector_name, collector_phone, rating) don't exist in Supabase DB yet
+    if (error && error.message.includes("column") && payload.status !== undefined) {
+      const fallbackResult = await supabase
+        .from("item_submissions")
+        .update({ status: payload.status })
+        .eq("id", payload.submissionId);
+
+      if (!fallbackResult.error) {
+        return {
+          success: true,
+          error:
+            "Status berhasil diubah ke " +
+            payload.status +
+            ". (Catatan: Jalankan migrasi SQL di Supabase SQL Editor agar kolom collector & rating aktif di database).",
+        };
+      }
+      error = fallbackResult.error;
+    }
 
     if (error) {
       return {

@@ -110,25 +110,18 @@ export default function DebugView() {
     setActionInProgress(item.id + "-" + newStatus);
     setFeedback(null);
 
-    // If moving to accepted / picked_up / completed and no collector yet, auto-assign default collector
-    const needsCollector =
-      (newStatus === "accepted" ||
-        newStatus === "picked_up" ||
-        newStatus === "completed") &&
-      !item.collector_name;
-
     const payload = {
       submissionId: item.id,
       status: newStatus,
-      collector_name: needsCollector ? MITRA_PRESETS[0].name : undefined,
-      collector_phone: needsCollector ? MITRA_PRESETS[0].phone : undefined,
     };
 
     const res = await updateSubmissionDebugAction(payload);
     if (res.success) {
       setFeedback({
         type: "success",
-        text: `Status ${item.item_name} berhasil diubah ke: ${formatStatus(newStatus)}.`,
+        text:
+          res.error ||
+          `Status ${item.item_name} berhasil diubah ke: ${formatStatus(newStatus)}.`,
       });
       // Refresh local state
       setItems((prev) =>
@@ -137,8 +130,6 @@ export default function DebugView() {
             ? {
                 ...i,
                 status: newStatus,
-                collector_name: needsCollector ? MITRA_PRESETS[0].name : i.collector_name,
-                collector_phone: needsCollector ? MITRA_PRESETS[0].phone : i.collector_phone,
               }
             : i
         )

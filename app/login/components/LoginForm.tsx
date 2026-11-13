@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
 import { loginAction } from "../actions/login.action";
+import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import styles from "../login.module.css";
 
 export default function LoginForm() {
@@ -68,6 +69,8 @@ export default function LoginForm() {
       )}
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        <GoogleSignInButton redirectTo={redirectTo || undefined} />
+
         <div className={styles.field}>
           <label htmlFor="email">Email</label>
           <input

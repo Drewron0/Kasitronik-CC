@@ -49,14 +49,6 @@ Kasitronik adalah web untuk melaporkan barang elektronik bekas agar dapat ditinj
 - Detail laporan serta alasan penolakan jika laporan ditolak.
 - Pembatalan laporan yang masih pending.
 
-### Dashboard admin
-
-- Halaman terpisah di `/admin`.
-- Admin otomatis diarahkan ke dashboard admin setelah login.
-- Admin dapat melihat laporan pending, foto, detail, dan lokasi.
-- Admin dapat menerima laporan atau menolaknya.
-- Penolakan menyediakan pilihan alasan dan kolom keterangan tambahan.
-- Aksi review dilindungi oleh role admin di database, bukan hanya tombol pada tampilan.
 
 ## Yang Belum Dibuat
 

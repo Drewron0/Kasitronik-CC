@@ -11,10 +11,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    name: Build & Validate
+  build-and-deploy:
+    name: Build & Deploy to CloudPanel
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
 
     steps:
       - name: Checkout Code
@@ -32,8 +32,7 @@ jobs:
 
       - name: Get pnpm store directory
         shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup pnpm cache
         uses: actions/cache@v4
@@ -53,69 +52,78 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_GEOAPIFY_MAPS_KEY: ${{ secrets.NEXT_PUBLIC_GEOAPIFY_MAPS_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+          GEOAPIFY_API_KEY: ${{ secrets.GEOAPIFY_API_KEY }}
         run: pnpm run build
 
-  deploy:
-    name: Deploy to CloudPanel via SSH
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
-    if: github.ref == 'refs/heads/main'
+      - name: Compress Build Artifacts
+        run: tar -czf build.tar.gz .next public package.json pnpm-lock.yaml next.config.*
 
-    steps:
-      - name: Execute Deployment Commands on CloudPanel Server
+      - name: Transfer Build to CloudPanel Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: "build.tar.gz"
+          target: ${{ secrets.TARGET_DIR }}
+
+      - name: Extract, Sync Env & Reload PM2 on Server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          command_timeout: 6m
+          command_timeout: 5m
+          envs: NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,NEXT_PUBLIC_GEOAPIFY_MAPS_KEY,GEMINI_API_KEY,GEMINI_MODEL,GEOAPIFY_API_KEY
           script: |
             set -e
             export CI=true
 
-            echo "==> Opening app directory"
             cd ${{ secrets.TARGET_DIR }}
 
-            echo "==> Pulling git from remote"
-            git config --global --add safe.directory '*'
-            git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN || github.token }}@github.com/${{ github.repository }}.git
-            git fetch origin main
-            git reset --hard origin/main
+            echo "==> Extracting new build"
+            rm -rf .next
+            tar -xzf build.tar.gz
+            rm -f build.tar.gz
 
-            echo "==> Checking environment pnpm"
+            echo "==> Updating .env file"
+            cat << 'EOF' > .env
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+            NEXT_PUBLIC_GEOAPIFY_MAPS_KEY=${{ secrets.NEXT_PUBLIC_GEOAPIFY_MAPS_KEY }}
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}
+            GEOAPIFY_API_KEY=${{ secrets.GEOAPIFY_API_KEY }}
+            EOF
+
+            echo "==> Checking pnpm & installing production dependencies"
             export PNPM_HOME="$HOME/.local/share/pnpm"
             NODE_BIN="$HOME/.nvm/versions/node/$(ls -1 $HOME/.nvm/versions/node 2>/dev/null | tail -n 1)/bin"
-            if [ -d "$NODE_BIN" ]; then
-              export PATH="$PNPM_HOME:$NODE_BIN:$PATH"
-            else
-              export PATH="$PNPM_HOME:$PATH"
-            fi
-
-            if ! pnpm --version &> /dev/null; then
-              echo "Memperbaiki dan memasang pnpm..."
-              rm -rf "$HOME/.local/share/pnpm"
-              corepack enable 2>/dev/null || npm install -g pnpm 2>/dev/null || curl -fsSL https://get.pnpm.io/install.sh | SHELL="$(which bash)" bash - || true
-            fi
+            export PATH="$PNPM_HOME:$NODE_BIN:$PATH"
 
             if pnpm --version &> /dev/null; then
               PNPM="pnpm"
-            elif [ -x "$HOME/.local/share/pnpm/pnpm" ] && "$HOME/.local/share/pnpm/pnpm" --version &> /dev/null; then
+            elif [ -x "$HOME/.local/share/pnpm/pnpm" ]; then
               PNPM="$HOME/.local/share/pnpm/pnpm"
             else
               PNPM="npx --yes pnpm"
             fi
 
-            echo "==> Installing dependencies on the server"
-            $PNPM install --frozen-lockfile
+            $PNPM install --prod --frozen-lockfile
 
-            echo "==> Building Next.js production app"
-            $PNPM run build
-
-            echo "==> Restarting Node.js"
+            echo "==> Reloading Kasitronik on PM2"
             if command -v pm2 &> /dev/null; then
-              pm2 reload all || pm2 restart all || true
+              if pm2 describe kasitronik > /dev/null 2>&1; then
+                pm2 reload kasitronik --update-env
+              else
+                pm2 start "$PNPM" --name "kasitronik" -- start
+                pm2 save
+              fi
             fi
 
-            echo "==> Deployment Kasitronik ke CloudPanel Berhasil Dilakukan!"
+            echo "==> Deployment Kasitronik ke CloudPanel Berhasil!"

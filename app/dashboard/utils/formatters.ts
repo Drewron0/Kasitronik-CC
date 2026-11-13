@@ -24,6 +24,14 @@ export const STATUS_LABELS: Record<SubmissionStatus, string> = {
   cancelled: "Dibatalkan",
 };
 
+export const RATING_LABELS: Record<number, string> = {
+  1: "Sangat Kurang",
+  2: "Kurang Puas",
+  3: "Cukup Baik",
+  4: "Puas",
+  5: "Sangat Memuaskan",
+};
+
 export function formatCategory(category: string): string {
   return CATEGORY_LABELS[category] || category;
 }
@@ -34,6 +42,10 @@ export function formatCondition(condition: string): string {
 
 export function formatStatus(status: SubmissionStatus): string {
   return STATUS_LABELS[status] || status;
+}
+
+export function formatRatingLabel(rating: number): string {
+  return RATING_LABELS[rating] || "";
 }
 
 export function formatWeight(

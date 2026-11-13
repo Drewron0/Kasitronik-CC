@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { SubmissionItem } from "../interfaces/submission-item.interface";
-import { formatCategory, formatCondition, formatDate, formatWeight } from "../utils/formatters";
+import {
+  formatCategory,
+  formatCondition,
+  formatDate,
+  formatWeight,
+} from "../utils/formatters";
 import StatusStepper from "./StatusStepper";
 import ReceiptModal from "./ReceiptModal";
 import styles from "../dashboard.module.css";
@@ -21,7 +26,6 @@ export default function SubmissionDetailModal({
 }: SubmissionDetailModalProps) {
   const [failedPhotoId, setFailedPhotoId] = useState<string | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
-  const isImgError = item ? failedPhotoId === item.id : false;
 
   useEffect(() => {
     if (!item) return;
@@ -37,6 +41,8 @@ export default function SubmissionDetailModal({
   }, [item, onClose]);
 
   if (!item) return null;
+
+  const isImgError = failedPhotoId === item.id;
 
   return (
     <>
@@ -134,71 +140,30 @@ export default function SubmissionDetailModal({
                   <span className={styles.detailValue}>{item.brand_model}</span>
                 </div>
               ) : null}
-            </div>
 
-            {/* Mitra Pengepul Information (Feature 1) */}
-            {item.status !== "pending" && item.status !== "cancelled" ? (
-              <div className={styles.infoBox}>
-                <span className={styles.detailLabel}>Mitra Pengepul Penjemput</span>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-                  <span className={styles.detailValue} style={{ fontWeight: 600 }}>
-                    {item.collector_name || "Mitra Resmi Kasitronik"}
-                  </span>
-                  {item.collector_phone ? (
-                    <a
-                      href={`https://wa.me/${item.collector_phone.replace(/[^0-9]/g, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.collectorContactLink}
-                    >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                      </svg>
-                      <span>Hubungi Mitra ({item.collector_phone})</span>
-                    </a>
+              {item.pickup_address ? (
+                <div className={styles.detailItem} style={{ gridColumn: "1 / -1" }}>
+                  <span className={styles.detailLabel}>Lokasi Penjemputan</span>
+                  <span className={styles.detailValue}>{item.pickup_address}</span>
+                  {item.pickup_instructions ? (
+                    <span style={{ fontSize: 13, color: "var(--muted)", marginTop: 2 }}>
+                      Patokan: {item.pickup_instructions}
+                    </span>
                   ) : null}
                 </div>
-              </div>
-            ) : null}
+              ) : null}
 
-            {/* Pickup Address & Instructions */}
-            {item.pickup_address ? (
-              <div className={styles.infoBox}>
-                <span className={styles.detailLabel}>Lokasi Penjemputan</span>
-                <span className={styles.detailValue} style={{ fontWeight: 500 }}>
-                  {item.pickup_address}
-                </span>
-                {item.pickup_instructions ? (
-                  <span style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>
-                    Patokan: {item.pickup_instructions}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
-
-            {/* Additional Notes */}
-            {item.notes ? (
-              <div className={styles.infoBox}>
-                <span className={styles.detailLabel}>Catatan Tambahan</span>
-                <span style={{ fontSize: 14, color: "var(--ink)", lineHeight: 1.5 }}>
-                  {item.notes}
-                </span>
-              </div>
-            ) : null}
+              {item.notes ? (
+                <div className={styles.detailItem} style={{ gridColumn: "1 / -1" }}>
+                  <span className={styles.detailLabel}>Catatan Tambahan</span>
+                  <span className={styles.detailValue}>{item.notes}</span>
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <div className={styles.modalFooter}>
-            {/* Eco-Receipt Button when completed (Feature 3) */}
+            {/* Eco-Receipt Button when completed */}
             {item.status === "completed" ? (
               <button
                 type="button"

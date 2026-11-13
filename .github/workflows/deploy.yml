@@ -75,16 +75,16 @@ jobs:
             set -e
             export CI=true
 
-            echo "==> 1. Membuka direktori aplikasi..."
+            echo "==> Opening app directory"
             cd ${{ secrets.TARGET_DIR }}
 
-            echo "==> 2. Menarik commit terbaru..."
+            echo "==> Pulling git from remote"
             git config --global --add safe.directory '*'
             git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN || github.token }}@github.com/${{ github.repository }}.git
             git fetch origin main
             git reset --hard origin/main
 
-            echo "==> 3. Memeriksa environment pnpm..."
+            echo "==> Checking environment pnpm"
             export PNPM_HOME="$HOME/.local/share/pnpm"
             NODE_BIN="$HOME/.nvm/versions/node/$(ls -1 $HOME/.nvm/versions/node 2>/dev/null | tail -n 1)/bin"
             if [ -d "$NODE_BIN" ]; then
@@ -107,13 +107,13 @@ jobs:
               PNPM="npx --yes pnpm"
             fi
 
-            echo "==> 4. Menginstal dependensi di server..."
+            echo "==> Installing dependencies on the server"
             $PNPM install --frozen-lockfile
 
-            echo "==> 5. Membangun aplikasi Next.js produksi..."
+            echo "==> Building Next.js production app"
             $PNPM run build
 
-            echo "==> 6. Merestart layanan Node.js di CloudPanel..."
+            echo "==> Restarting Node.js"
             if command -v pm2 &> /dev/null; then
               pm2 reload all || pm2 restart all || true
             fi

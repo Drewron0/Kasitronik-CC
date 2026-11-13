@@ -13,7 +13,6 @@ export default function AccountNav() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -54,20 +53,6 @@ export default function AccountNav() {
     };
   }, [isOpen]);
 
-  function handleMouseEnter() {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = null;
-    }
-    setIsOpen(true);
-  }
-
-  function handleMouseLeave() {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsOpen(false);
-    }, 180);
-  }
-
   async function handleLogout() {
     setLoading(true);
     setError("");
@@ -94,8 +79,6 @@ export default function AccountNav() {
         <div
           ref={dropdownRef}
           className={styles.accountDropdownContainer}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <button
             type="button"

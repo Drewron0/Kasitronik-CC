@@ -6,11 +6,10 @@
   z-index: 100;
   width: 100%;
   padding-block: 16px;
-  background: rgba(250, 249, 247, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 1px 0 rgba(225, 231, 222, 0.5);
-  transition: padding 0.2s ease, background-color 0.2s ease;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(28, 38, 33, 0.03);
+  transition: padding 0.2s ease;
 }
 
 .headerInner {

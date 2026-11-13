@@ -15,6 +15,8 @@
   --destructive-border: #fca5a5;
 
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   background-color: var(--canvas);
@@ -273,19 +275,19 @@
 .card {
   display: flex;
   flex-direction: column;
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px 24px;
   cursor: pointer;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   text-align: left;
+  position: relative;
 }
 
 .card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 6px 24px rgba(28, 38, 33, 0.06);
-  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(28, 38, 33, 0.05);
 }
 
 .card:focus-visible {
@@ -570,13 +572,16 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   z-index: 1000;
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal {
   width: min(580px, 100%);
-  max-height: min(88vh, 800px);
+  max-height: min(88vh, 760px);
+  margin: auto;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -626,11 +631,15 @@
 }
 
 .modalBody {
-  padding: 28px;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 24px 28px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .modalStepperSection {
@@ -684,49 +693,19 @@
   line-height: 1.4;
 }
 
-.infoBox {
-  background: var(--canvas);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-}
 
-.collectorContactLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: var(--sage-tint);
-  border: 1px solid var(--border);
-  color: var(--green);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.collectorContactLink:hover {
-  background: var(--sage);
-  border-color: var(--green);
-}
 
 /* Receipt Paper & Modal */
 .receiptModal {
   width: min(640px, 100%);
+  max-height: min(88vh, 760px);
 }
 
 .receiptPaper {
   background: var(--surface);
-  padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  overflow-y: auto;
 }
 
 .receiptHeader {
@@ -838,13 +817,11 @@
 
 .receiptSealBox {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  padding: 14px 16px;
-  background: var(--sage-tint);
-  border: 1px solid var(--sage);
-  border-radius: 10px;
-  color: var(--green);
+  padding: 14px 0 0;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -852,7 +829,7 @@
 .receiptSealBox strong {
   display: block;
   font-size: 13px;
-  color: var(--green-hover);
+  color: var(--green);
   margin-bottom: 2px;
 }
 
@@ -862,32 +839,161 @@
 
 /* Print Styles */
 @media print {
-  body * {
-    visibility: hidden;
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm;
   }
-  #printable-receipt,
-  #printable-receipt * {
-    visibility: visible;
-  }
-  #printable-receipt {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 20px;
+
+  html,
+  body {
     background: #ffffff !important;
+    color: #1c2621 !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body::before {
+    display: none !important;
+  }
+
+  /* Hide regular page elements */
+  .page > *:not(.modalBackdrop) {
+    display: none !important;
+  }
+
+  /* Hide any other modal backdrop except the active receipt */
+  .modalBackdrop:not(.receiptBackdrop) {
+    display: none !important;
+  }
+
+  /* Reset receipt modal backdrop to flow in document */
+  .receiptBackdrop {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    animation: none !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Reset modal box container */
+  .receiptModal {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    animation: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide header bar and footer buttons when printing */
+  .modalHeader,
+  .modalFooter,
+  .closeButton {
+    display: none !important;
+  }
+
+  /* Receipt paper styles for clean print output */
+  .receiptPaper {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border: none !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .receiptHeader {
+    display: flex !important;
+    margin-bottom: 16px !important;
+  }
+
+  .receiptBrandTitle {
+    color: #1c2621 !important;
+  }
+
+  .receiptNumber {
+    color: #046645 !important;
+  }
+
+  .receiptDivider {
+    height: 1px !important;
+    background: #e1e7de !important;
+    margin: 16px 0 !important;
+  }
+
+  .receiptDocumentHeading {
+    margin-bottom: 20px !important;
+  }
+
+  .receiptTable {
+    border: 1px solid #e1e7de !important;
+    background: #faf9f7 !important;
+    border-radius: 8px !important;
+    margin-bottom: 20px !important;
+    overflow: hidden !important;
+  }
+
+  .receiptRow {
+    display: flex !important;
+    border-bottom: 1px solid #e1e7de !important;
+    padding: 10px 14px !important;
+  }
+
+  .receiptColLabel {
+    color: #59665d !important;
+  }
+
+  .receiptColValue {
+    color: #1c2621 !important;
+  }
+
+  .receiptVerifiedText {
+    color: #046645 !important;
+  }
+
+  .receiptSealBox {
+    display: flex !important;
+    border-top: 1px solid #e1e7de !important;
+    padding-top: 14px !important;
+  }
+
+  .receiptSealBox strong {
+    color: #046645 !important;
   }
 }
 
 .modalFooter {
+  flex-shrink: 0;
   padding: 18px 28px;
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  background: var(--canvas);
+  background: var(--surface);
 }
 
 .confirmDangerButton {
@@ -1032,5 +1138,45 @@
 
   .detailItem {
     flex: 1 1 100%;
+  }
+
+  .receiptModal {
+    max-height: 96vh;
+  }
+
+  .receiptPaper {
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .receiptHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .receiptMeta {
+    align-items: flex-start;
+  }
+
+  .receiptRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 12px;
+  }
+
+  .receiptColValue {
+    text-align: left;
+  }
+
+  .modalFooter {
+    padding: 14px 16px;
+    flex-direction: column-reverse;
+  }
+
+  .modalFooter .actionButton {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -391,6 +391,12 @@ export default function DashboardView() {
         item={selectedDetailItem}
         onClose={() => setSelectedDetailItem(null)}
         onRequestCancel={(item) => setCancelTargetItem(item)}
+        onUpdateItem={(updated) => {
+          setSelectedDetailItem(updated);
+          setItems((prev) =>
+            prev.map((i) => (i.id === updated.id ? updated : i))
+          );
+        }}
       />
 
       <CancelConfirmModal

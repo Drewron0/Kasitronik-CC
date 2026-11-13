@@ -880,6 +880,233 @@
   }
 }
 
+/* Rating Section in Detail Modal */
+.promptRatingCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: var(--sage-tint);
+  border: 1px solid var(--sage);
+  border-radius: 12px;
+}
+
+.promptRatingText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.promptRatingTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.promptRatingDesc {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.promptRatingButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--green);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.promptRatingButton:hover {
+  background: var(--green-hover);
+}
+
+.ratedCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 20px;
+  background: var(--sage-tint);
+  border: 1px solid var(--sage);
+  border-radius: 12px;
+}
+
+.ratedCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ratedCardTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ratedDateText {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.starsRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starIcon {
+  color: #eab308;
+}
+
+.starIconEmpty {
+  color: var(--border-hover);
+}
+
+.ratingScoreLabel {
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ratedReviewQuote {
+  margin: 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.5;
+  padding-left: 10px;
+  border-left: 3px solid var(--green);
+}
+
+/* Rating Interactive Modal */
+.ratingModal {
+  width: min(520px, 100%);
+}
+
+.ratingModalBody {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ratingCollectorInfo {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ratingCollectorTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.ratingCollectorSubtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.starSelectorGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+}
+
+.starSelectorRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.starSelectButton {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+
+.starSelectButton:hover {
+  transform: scale(1.15);
+  border-color: var(--sage);
+}
+
+.starSelectButton:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.activeScoreDescription {
+  min-height: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.ratingReviewField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ratingReviewLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.ratingReviewTextarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--canvas);
+  color: var(--ink);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.15s ease;
+}
+
+.ratingReviewTextarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(4, 102, 69, 0.15);
+}
+
+.ratingCharCounter {
+  align-self: flex-end;
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .modalFooter {
   padding: 18px 28px;
   border-top: 1px solid var(--border);

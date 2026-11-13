@@ -21,7 +21,7 @@ Kasitronik adalah aplikasi untuk mengelola pengumpulan barang elektronik bekas. 
 ### Aaron
 
 - Mengurus konfigurasi dan alur CI/CD.
-- Mengelola integrasi serta konfigurasi Supabase.
+- Mengembangkan UI dan alur kinerja dashboard pengguna.
 
 ### Jermy
 

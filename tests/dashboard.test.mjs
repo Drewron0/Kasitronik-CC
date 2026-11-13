@@ -3,11 +3,13 @@ import assert from "node:assert/strict";
 import {
   formatCategory,
   formatCondition,
+  formatRatingLabel,
   formatStatus,
   formatWeight,
   formatDate,
   CATEGORY_LABELS,
   CONDITION_LABELS,
+  RATING_LABELS,
   STATUS_LABELS,
 } from "../app/dashboard/utils/formatters.ts";
 
@@ -98,3 +100,12 @@ test("dashboard receipt number formatting generates canonical identifier", () =>
   const receiptNumber = `KST-${sampleId.replace(/-/g, "").slice(0, 10).toUpperCase()}`;
   assert.equal(receiptNumber, "KST-94F97B739A");
 });
+
+test("dashboard formatRatingLabel handles 1 to 5 star ratings and out of bounds", () => {
+  for (const [star, label] of Object.entries(RATING_LABELS)) {
+    assert.equal(formatRatingLabel(Number(star)), label);
+  }
+  assert.equal(formatRatingLabel(0), "");
+  assert.equal(formatRatingLabel(6), "");
+});
+

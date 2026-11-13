@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
 import { registerAction } from "../actions/register.action";
+import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import styles from "../../login/login.module.css";
 
 export default function RegisterForm() {
@@ -14,6 +15,7 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const hasMinLength = password.length >= 8;
@@ -28,6 +30,7 @@ export default function RegisterForm() {
 
     setMessage("");
     setIsError(false);
+    setAlreadyRegistered(false);
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -61,6 +64,7 @@ export default function RegisterForm() {
     if (!result.success) {
       setMessage(result.error ?? "Pendaftaran gagal.");
       setIsError(true);
+      setAlreadyRegistered(Boolean(result.alreadyRegistered));
       return;
     }
 
@@ -83,6 +87,8 @@ export default function RegisterForm() {
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        <GoogleSignInButton />
+
         <div className={styles.field}>
           <label htmlFor="name">Nama lengkap</label>
           <input
@@ -182,9 +188,11 @@ export default function RegisterForm() {
           </p>
         )}
 
-        <p className={styles.switchAccount}>
+        {alreadyRegistered && <p className={styles.switchAccount}>Sudah punya akun? <Link href="/login">Masuk sekarang</Link>.</p>}
+
+        {!alreadyRegistered && <p className={styles.switchAccount}>
           Sudah punya akun? <Link href="/login">Masuk</Link>
-        </p>
+        </p>}
       </form>
     </section>
   );

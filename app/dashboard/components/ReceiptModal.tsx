@@ -3,7 +3,12 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import type { SubmissionItem } from "../interfaces/submission-item.interface";
-import { formatCategory, formatCondition, formatDate, formatRatingLabel, formatWeight } from "../utils/formatters";
+import {
+  formatCategory,
+  formatCondition,
+  formatDate,
+  formatWeight,
+} from "../utils/formatters";
 import styles from "../dashboard.module.css";
 
 interface ReceiptModalProps {
@@ -138,25 +143,11 @@ export default function ReceiptModal({ item, onClose }: ReceiptModalProps) {
               </div>
             ) : null}
             <div className={styles.receiptRow}>
-              <span className={styles.receiptColLabel}>Mitra Penerima</span>
-              <span className={styles.receiptColValue}>
-                {item.collector_name || "Mitra Resmi Kasitronik"}
-              </span>
-            </div>
-            <div className={styles.receiptRow}>
               <span className={styles.receiptColLabel}>Status Verifikasi</span>
               <span className={`${styles.receiptColValue} ${styles.receiptVerifiedText}`}>
                 Selesai & Terverifikasi
               </span>
             </div>
-            {item.collector_rating ? (
-              <div className={styles.receiptRow}>
-                <span className={styles.receiptColLabel}>Penilaian Layanan</span>
-                <span className={styles.receiptColValue}>
-                  {item.collector_rating} / 5 Bintang ({formatRatingLabel(item.collector_rating)})
-                </span>
-              </div>
-            ) : null}
           </div>
 
           {/* Receipt Seal / Footer Note */}

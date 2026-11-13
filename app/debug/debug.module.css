@@ -136,12 +136,6 @@
   gap: 6px;
 }
 
-.debugBadgeRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .debugTitle {
   margin: 0;
   font-size: 26px;
@@ -149,16 +143,6 @@
   color: var(--ink);
 }
 
-.debugTag {
-  padding: 4px 10px;
-  border-radius: 6px;
-  background: var(--sage);
-  color: var(--green);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
 
 .debugDescription {
   margin: 0;
@@ -285,47 +269,16 @@
   color: var(--muted);
 }
 
-.statusIndicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 999px;
+.statusText {
   font-size: 13px;
+  color: var(--muted);
+}
+
+.statusText strong {
+  color: var(--green);
   font-weight: 700;
-  border: 1px solid var(--border);
-  background: var(--canvas);
 }
 
-.statusIndicator[data-status="pending"] {
-  background: var(--sage-tint);
-  color: var(--green);
-  border-color: var(--sage);
-}
-
-.statusIndicator[data-status="accepted"] {
-  background: #eef4ff;
-  color: #1e40af;
-  border-color: #bfdbfe;
-}
-
-.statusIndicator[data-status="picked_up"] {
-  background: #fef3c7;
-  color: #92400e;
-  border-color: #fde68a;
-}
-
-.statusIndicator[data-status="completed"] {
-  background: var(--sage);
-  color: var(--green);
-  border-color: var(--green);
-}
-
-.statusIndicator[data-status="cancelled"] {
-  background: var(--destructive-tint);
-  color: var(--destructive);
-  border-color: var(--destructive);
-}
 
 /* Controls Grid */
 .controlGrid {
@@ -384,43 +337,6 @@
 .statusButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.presetButton {
-  min-height: 36px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--canvas);
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.presetButton:hover:not(:disabled) {
-  background: var(--sage-tint);
-  border-color: var(--green);
-  color: var(--green);
-}
-
-.resetRatingButton {
-  min-height: 36px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--destructive-tint);
-  color: var(--destructive);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.resetRatingButton:hover:not(:disabled) {
-  border-color: var(--destructive);
-  background: #fbd6cb;
 }
 
 /* Loading & Empty */

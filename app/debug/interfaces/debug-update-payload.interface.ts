@@ -2,13 +2,11 @@ import type { SubmissionStatus } from "@/app/dashboard/interfaces/submission-sta
 
 export interface DebugUpdatePayload {
   submissionId: string;
-  status?: SubmissionStatus;
-  collector_name?: string | null;
-  collector_phone?: string | null;
-  reset_rating?: boolean;
+  status: SubmissionStatus;
 }
 
 export interface DebugUpdateResult {
   success: boolean;
   error?: string;
 }
+

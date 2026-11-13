@@ -14,13 +14,8 @@ import styles from "../debug.module.css";
 const DEFAULT_ACCESS_CODE = "kasitronik2026";
 const STORAGE_KEY = "kasitronik_debug_unlocked";
 
-const MITRA_PRESETS = [
-  { name: "Budi Santoso", phone: "081234567890" },
-  { name: "Siti Rahma", phone: "087812345678" },
-  { name: "Agus Pratama", phone: "085612345678" },
-];
-
 function subscribeStorage(callback: () => void) {
+
   window.addEventListener("storage", callback);
   return () => window.removeEventListener("storage", callback);
 }
@@ -110,20 +105,16 @@ export default function DebugView() {
     setActionInProgress(item.id + "-" + newStatus);
     setFeedback(null);
 
-    const payload = {
+    const res = await updateSubmissionDebugAction({
       submissionId: item.id,
       status: newStatus,
-    };
+    });
 
-    const res = await updateSubmissionDebugAction(payload);
     if (res.success) {
       setFeedback({
         type: "success",
-        text:
-          res.error ||
-          `Status ${item.item_name} berhasil diubah ke: ${formatStatus(newStatus)}.`,
+        text: `Status ${item.item_name} berhasil diubah ke: ${formatStatus(newStatus)}.`,
       });
-      // Refresh local state
       setItems((prev) =>
         prev.map((i) =>
           i.id === item.id
@@ -138,73 +129,6 @@ export default function DebugView() {
       setFeedback({
         type: "error",
         text: res.error || "Gagal memperbarui status.",
-      });
-    }
-
-    setActionInProgress(null);
-  };
-
-  const handleSetMitra = async (
-    item: SubmissionItem,
-    collectorName: string,
-    collectorPhone: string
-  ) => {
-    setActionInProgress(item.id + "-mitra");
-    setFeedback(null);
-
-    const res = await updateSubmissionDebugAction({
-      submissionId: item.id,
-      collector_name: collectorName,
-      collector_phone: collectorPhone,
-    });
-
-    if (res.success) {
-      setFeedback({
-        type: "success",
-        text: `Mitra penjemput ${item.item_name} diperbarui ke ${collectorName}.`,
-      });
-      setItems((prev) =>
-        prev.map((i) =>
-          i.id === item.id
-            ? { ...i, collector_name: collectorName, collector_phone: collectorPhone }
-            : i
-        )
-      );
-    } else {
-      setFeedback({
-        type: "error",
-        text: res.error || "Gagal memperbarui mitra.",
-      });
-    }
-
-    setActionInProgress(null);
-  };
-
-  const handleResetRating = async (item: SubmissionItem) => {
-    setActionInProgress(item.id + "-reset-rating");
-    setFeedback(null);
-
-    const res = await updateSubmissionDebugAction({
-      submissionId: item.id,
-      reset_rating: true,
-    });
-
-    if (res.success) {
-      setFeedback({
-        type: "success",
-        text: `Rating untuk ${item.item_name} berhasil direset.`,
-      });
-      setItems((prev) =>
-        prev.map((i) =>
-          i.id === item.id
-            ? { ...i, collector_rating: null, collector_review: "", rated_at: null }
-            : i
-        )
-      );
-    } else {
-      setFeedback({
-        type: "error",
-        text: res.error || "Gagal mereset rating.",
       });
     }
 
@@ -257,12 +181,9 @@ export default function DebugView() {
         {/* Debug Header */}
         <header className={styles.debugHeader}>
           <div className={styles.debugTitleGroup}>
-            <div className={styles.debugBadgeRow}>
-              <h1 className={styles.debugTitle}>Panel Debug Laporan</h1>
-              <span className={styles.debugTag}>Dev Tool</span>
-            </div>
+            <h1 className={styles.debugTitle}>Panel Debug Status</h1>
             <p className={styles.debugDescription}>
-              Ubah status laporan dengan cepat untuk menguji alur penjemputan, rating, dan tanda terima.
+              Ubah status laporan untuk menguji alur penjemputan barang dan riwayat status di dashboard.
             </p>
           </div>
 
@@ -343,8 +264,9 @@ export default function DebugView() {
                       </span>
                     </div>
 
-                    <div className={styles.statusIndicator} data-status={item.status}>
-                      <span>Status: {formatStatus(item.status)}</span>
+                    <div className={styles.statusText}>
+                      <span>Status: </span>
+                      <strong>{formatStatus(item.status)}</strong>
                     </div>
                   </div>
 
@@ -372,57 +294,6 @@ export default function DebugView() {
                           );
                         })}
                       </div>
-                    </div>
-
-                    {/* Mitra Assignment Presets */}
-                    <div className={styles.controlSection}>
-                      <span className={styles.controlLabel}>
-                        Mitra Penjemput:{" "}
-                        <strong style={{ color: "var(--ink)" }}>
-                          {item.collector_name
-                            ? `${item.collector_name} (${item.collector_phone || "-"})`
-                            : "Belum Ditetapkan"}
-                        </strong>
-                      </span>
-                      <div className={styles.btnGroup}>
-                        {MITRA_PRESETS.map((m) => (
-                          <button
-                            key={m.name}
-                            type="button"
-                            className={styles.presetButton}
-                            disabled={actionInProgress === `${item.id}-mitra`}
-                            onClick={() => handleSetMitra(item, m.name, m.phone)}
-                          >
-                            Set: {m.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Rating Status & Reset */}
-                    <div className={styles.controlSection}>
-                      <span className={styles.controlLabel}>
-                        Rating Pengepul:{" "}
-                        <strong style={{ color: "var(--ink)" }}>
-                          {item.collector_rating
-                            ? `${item.collector_rating}/5 Bintang ${
-                                item.collector_review ? `("${item.collector_review}")` : ""
-                              }`
-                            : "Belum Dinilai"}
-                        </strong>
-                      </span>
-                      {item.collector_rating ? (
-                        <div className={styles.btnGroup}>
-                          <button
-                            type="button"
-                            className={styles.resetRatingButton}
-                            disabled={actionInProgress === `${item.id}-reset-rating`}
-                            onClick={() => handleResetRating(item)}
-                          >
-                            Reset Rating ke Belum Dinilai
-                          </button>
-                        </div>
-                      ) : null}
                     </div>
                   </div>
                 </article>

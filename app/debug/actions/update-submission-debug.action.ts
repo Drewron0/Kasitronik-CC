@@ -27,51 +27,29 @@ export async function updateSubmissionDebugAction(
       };
     }
 
-    const updateFields: Record<string, unknown> = {};
-
-    if (payload.status !== undefined) {
-      updateFields.status = payload.status;
+    if (!payload.status) {
+      return {
+        success: false,
+        error: "Status baru wajib dipilih.",
+      };
     }
 
-    if (payload.collector_name !== undefined) {
-      updateFields.collector_name = payload.collector_name;
-    }
-
-    if (payload.collector_phone !== undefined) {
-      updateFields.collector_phone = payload.collector_phone;
-    }
-
-    if (payload.reset_rating) {
-      updateFields.collector_rating = null;
-      updateFields.collector_review = "";
-      updateFields.rated_at = null;
-    }
-
-    let { error } = await supabase
+    const { error } = await supabase
       .from("item_submissions")
-      .update(updateFields)
+      .update({ status: payload.status })
       .eq("id", payload.submissionId);
 
-    // If failed because optional columns (collector_name, collector_phone, rating) don't exist in Supabase DB yet
-    if (error && error.message.includes("column") && payload.status !== undefined) {
-      const fallbackResult = await supabase
-        .from("item_submissions")
-        .update({ status: payload.status })
-        .eq("id", payload.submissionId);
-
-      if (!fallbackResult.error) {
+    if (error) {
+      if (
+        error.message.includes("permission denied") ||
+        error.code === "42501"
+      ) {
         return {
-          success: true,
+          success: false,
           error:
-            "Status berhasil diubah ke " +
-            payload.status +
-            ". (Catatan: Jalankan migrasi SQL di Supabase SQL Editor agar kolom collector & rating aktif di database).",
+            "Izin database belum diberikan. Silakan jalankan perintah SQL migration di Supabase SQL Editor untuk mengaktifkan izin update status.",
         };
       }
-      error = fallbackResult.error;
-    }
-
-    if (error) {
       return {
         success: false,
         error: "Gagal memperbarui status debug: " + error.message,
@@ -89,3 +67,4 @@ export async function updateSubmissionDebugAction(
     };
   }
 }
+

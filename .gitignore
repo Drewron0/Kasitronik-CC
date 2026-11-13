@@ -43,3 +43,6 @@ desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# AI Agents & Skills
+.agents/

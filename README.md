@@ -1,33 +1,29 @@
 # Kasitronik
 
-Platform digital untuk menghubungkan masyarakat dengan mitra pengepul dalam pengelolaan dan penyaluran sampah elektronik (*e-waste*).
+Kasitronik adalah aplikasi untuk mengelola pengumpulan barang elektronik bekas. Pengguna dapat membuat akun, mengirim laporan barang beserta foto dan lokasi penjemputan, serta mendapatkan bantuan pengisian detail barang menggunakan Google Gemini.
 
-## Menjalankan Proyek
+## Fitur Utama
 
-Pastikan telah menginstal [Node.js](https://nodejs.org/) dan [pnpm](https://pnpm.io/).
+- Autentikasi pengguna dengan Supabase.
+- Pengiriman laporan barang elektronik bekas.
+- Pengunggahan foto barang secara aman.
+- Penentuan lokasi penjemputan melalui peta dan pencarian alamat.
+- Bantuan AI untuk mengenali dan mengisi detail barang dari foto.
+- Penyimpanan data dengan Supabase dan perlindungan Row Level Security.
 
-```bash
-# Instal dependensi
-pnpm install
+## Pembagian Tugas
 
-# Jalankan server pengembangan
-pnpm dev
-```
+### Nathan
 
-Buka [http://localhost:3000](http://localhost:3000) pada peramban.
+- Melakukan deployment aplikasi.
+- Mengembangkan dan mengurus antarmuka pengguna (UI).
 
-## Build Produksi
+### Aaron
 
-```bash
-# Build untuk deployment
-pnpm build
+- Mengurus konfigurasi dan alur CI/CD.
+- Mengembangkan UI dan alur kinerja dashboard pengguna.
 
-# Menjalankan hasil build
-pnpm start
-```
+### Jermy
 
-## Lint & Code Quality
-
-```bash
-pnpm run lint
-```
+- Menghubungkan aplikasi dengan Gemini API.
+- Mengembangkan dan mengurus integrasi Supabase.

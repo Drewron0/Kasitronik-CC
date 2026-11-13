@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
 import { loginAction } from "../actions/login.action";
+import type { LoginFormProps } from "../interfaces/login-form-props.interface";
 import styles from "../login.module.css";
 
-export default function LoginForm() {
+export default function LoginForm({ initialMessage }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(initialMessage ?? "");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 

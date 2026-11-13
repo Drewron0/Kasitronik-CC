@@ -24,7 +24,10 @@ export async function registerAction(payload: RegisterPayload): Promise<Register
         data: {
           full_name: payload.name,
         },
-        emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/login` : undefined,
+        emailRedirectTo:
+          typeof window !== "undefined"
+            ? `${window.location.origin}/auth/callback`
+            : undefined,
       },
     });
 

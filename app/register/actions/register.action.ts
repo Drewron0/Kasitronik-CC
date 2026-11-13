@@ -4,10 +4,21 @@ import type { RegisterResult } from "../interfaces/register-result.interface";
 
 export async function registerAction(payload: RegisterPayload): Promise<RegisterResult> {
   try {
-    const hasMinLength = payload.password.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(payload.password);
-    const hasNumber = /[0-9]/.test(payload.password);
-    const hasSymbol = /[^A-Za-z0-9]/.test(payload.password);
+    const name = payload.name.trim();
+    const email = payload.email.trim();
+    const password = payload.password;
+
+    if (!name || !email || !password) {
+      return {
+        success: false,
+        error: "Semua kolom wajib diisi.",
+      };
+    }
+
+    const hasMinLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSymbol = /[^A-Za-z0-9]/.test(password);
 
     if (!hasMinLength || !hasUpperCase || !hasNumber || !hasSymbol) {
       return {
@@ -18,11 +29,11 @@ export async function registerAction(payload: RegisterPayload): Promise<Register
     }
 
     const { data, error } = await supabase.auth.signUp({
-      email: payload.email,
-      password: payload.password,
+      email,
+      password,
       options: {
         data: {
-          full_name: payload.name,
+          full_name: name,
         },
         emailRedirectTo:
           typeof window !== "undefined"
@@ -32,16 +43,37 @@ export async function registerAction(payload: RegisterPayload): Promise<Register
     });
 
     if (error) {
-      const alreadyRegistered = error.code === "user_already_exists" || /already (been )?registered|already exists/i.test(error.message);
+      const alreadyRegistered =
+        error.code === "user_already_exists" ||
+        /already (been )?registered|already exists/i.test(error.message);
+
+      if (alreadyRegistered) {
+        return {
+          success: false,
+          alreadyRegistered: true,
+          error: "Akun sudah terdaftar. Silakan masuk ke akun Anda.",
+        };
+      }
+
+      if (error.status === 429 || /rate limit|too many/i.test(error.message)) {
+        return {
+          success: false,
+          error: "Terlalu banyak permintaan pendaftaran. Silakan tunggu beberapa saat.",
+        };
+      }
+
       return {
         success: false,
-        alreadyRegistered,
-        error: alreadyRegistered ? "Email ini sudah terdaftar. Masuk atau verifikasi akun yang sudah ada." : "Pendaftaran gagal. Periksa data lalu coba lagi.",
+        error: "Pendaftaran gagal. Periksa data lalu coba lagi.",
       };
     }
 
     if (data.user?.identities?.length === 0) {
-      return { success: false, alreadyRegistered: true, error: "Email ini sudah terdaftar. Masuk atau verifikasi akun yang sudah ada." };
+      return {
+        success: false,
+        alreadyRegistered: true,
+        error: "Akun sudah terdaftar. Silakan masuk ke akun Anda.",
+      };
     }
 
     return {
@@ -53,7 +85,7 @@ export async function registerAction(payload: RegisterPayload): Promise<Register
   } catch {
     return {
       success: false,
-      error: "Tidak dapat menghubungi server. Coba lagi.",
+      error: "Tidak dapat terhubung ke server. Silakan coba lagi.",
     };
   }
 }

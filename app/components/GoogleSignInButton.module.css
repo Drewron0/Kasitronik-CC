@@ -37,8 +37,13 @@
 }
 
 .message {
+  width: 100%;
+  box-sizing: border-box;
   margin: 12px 0 0;
   color: #a12d24;
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }

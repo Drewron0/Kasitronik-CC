@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
+import AlertCircleIcon from "@/app/components/icons/AlertCircleIcon";
 import { loginAction } from "../actions/login.action";
 import type { LoginFormProps } from "../interfaces/login-form-props.interface";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
@@ -104,9 +105,12 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
         </button>
 
         {message && (
-          <p className={styles.message} role="alert">
-            {message}
-          </p>
+          <div className={styles.alert} role="alert">
+            <AlertCircleIcon size={18} className={styles.alertIcon} />
+            <div className={styles.alertBody}>
+              <span className={styles.alertText}>{message}</span>
+            </div>
+          </div>
         )}
 
         <p className={styles.switchAccount}>

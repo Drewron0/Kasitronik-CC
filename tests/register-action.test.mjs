@@ -15,5 +15,5 @@ function load(signUp) {
 test("registration reports a previously registered email without exposing provider errors", async () => {
   const action = load(async () => ({ data: { user: { identities: [] }, session: null }, error: null }));
   const result = await action({ name: "Jermy", email: "jermy@example.com", password: "Password1!" });
-  assert.deepEqual(result, { success: false, alreadyRegistered: true, error: "Email ini sudah terdaftar. Masuk atau verifikasi akun yang sudah ada." });
+  assert.deepEqual(result, { success: false, alreadyRegistered: true, error: "Akun sudah terdaftar. Silakan masuk ke akun Anda." });
 });

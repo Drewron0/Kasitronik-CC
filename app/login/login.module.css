@@ -84,6 +84,9 @@
 .card {
   flex: 1;
   min-width: 0;
+  max-width: 480px;
+  width: 100%;
+  box-sizing: border-box;
   padding: 40px;
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -235,11 +238,92 @@
   cursor: not-allowed;
 }
 
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fdf3f2;
+  border: 1px solid #f6d2ce;
+  color: #a12d24;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #a12d24;
+}
+
+.alertBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.alertText {
+  color: #892019;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.alertLink {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 4px;
+  color: var(--green, #046645);
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 150ms ease;
+}
+
+.alertLink:hover {
+  color: var(--green-hover, #034d34);
+}
+
+.alertSuccess {
+  background: var(--sage, #e8f2e8);
+  border-color: #d1e5d1;
+  color: var(--green, #046645);
+}
+
+.alertSuccess .alertIcon {
+  color: var(--green, #046645);
+}
+
+.alertSuccess .alertText {
+  color: var(--green, #046645);
+}
+
 .message {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 16px 0 0;
   color: #a12d24;
   font-size: 13px;
-  line-height: 1.7;
+  line-height: 1.6;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .message:empty {
@@ -309,6 +393,9 @@
 
   .card {
     padding: 24px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .cardHeading h2 {

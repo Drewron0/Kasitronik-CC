@@ -5,6 +5,7 @@ import Link from "next/link";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
 import EnvelopeIcon from "@/app/components/icons/EnvelopeIcon";
+import AlertCircleIcon from "@/app/components/icons/AlertCircleIcon";
 import { registerAction } from "../actions/register.action";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import styles from "../../login/login.module.css";
@@ -51,7 +52,7 @@ export default function RegisterForm() {
     }
 
     if (password !== confirmation) {
-      setMessage("Konfirmasi kata sandi belum cocok.");
+      setMessage("Konfirmasi kata sandi tidak cocok.");
       setIsError(true);
       return;
     }
@@ -213,26 +214,25 @@ export default function RegisterForm() {
         </button>
 
         {message && (
-          <p
-            className={styles.message}
+          <div
+            className={`${styles.alert} ${!isError ? styles.alertSuccess : ""}`}
             role={isError ? "alert" : "status"}
-            style={{ color: isError ? "#a12d24" : "var(--green)" }}
           >
-            {message}
-          </p>
+            <AlertCircleIcon size={18} className={styles.alertIcon} />
+            <div className={styles.alertBody}>
+              <span className={styles.alertText}>{message}</span>
+              {alreadyRegistered && (
+                <Link href="/login" className={styles.alertLink}>
+                  Masuk ke akun sekarang
+                </Link>
+              )}
+            </div>
+          </div>
         )}
 
-        {alreadyRegistered && (
-          <p className={styles.switchAccount}>
-            Sudah punya akun? <Link href="/login">Masuk sekarang</Link>.
-          </p>
-        )}
-
-        {!alreadyRegistered && (
-          <p className={styles.switchAccount}>
-            Sudah punya akun? <Link href="/login">Masuk</Link>
-          </p>
-        )}
+        <p className={styles.switchAccount}>
+          Sudah punya akun? <Link href="/login">Masuk</Link>
+        </p>
       </form>
     </section>
   );

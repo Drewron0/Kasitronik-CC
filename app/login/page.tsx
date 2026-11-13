@@ -4,7 +4,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import LoginForm from "./components/LoginForm";
 import LoginIntro from "./components/LoginIntro";
-import type { LoginPageProps } from "./interfaces/login-page-props.interface";
 import styles from "./login.module.css";
 
 export const metadata: Metadata = {
@@ -12,15 +11,7 @@ export const metadata: Metadata = {
   description: "Masuk ke akun Kasitronik Anda untuk mengelola laporan dan penjemputan.",
 };
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const { confirmation } = await searchParams;
-  const initialMessage =
-    confirmation === "success"
-      ? "Email berhasil dikonfirmasi. Silakan masuk dengan akun Anda."
-      : confirmation === "error"
-        ? "Konfirmasi email gagal atau tautannya sudah kedaluwarsa."
-        : undefined;
-
+export default function LoginPage() {
   return (
     <main className={styles.page}>
       <Header variant="auth" currentAuthPage="login" />
@@ -28,7 +19,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <div className={styles.content}>
         <LoginIntro />
         <Suspense fallback={<div className={styles.card}>Memuat formulir...</div>}>
-          <LoginForm initialMessage={initialMessage} />
+          <LoginForm />
         </Suspense>
       </div>
 

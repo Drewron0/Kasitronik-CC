@@ -11,12 +11,22 @@ import type { LoginFormProps } from "../interfaces/login-form-props.interface";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import styles from "../login.module.css";
 
-export default function LoginForm({ initialMessage }: LoginFormProps) {
+export default function LoginForm({ initialMessage }: LoginFormProps = {}) {
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState(initialMessage ?? "");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const confirmation = searchParams.get("confirmation");
+  const confirmationMessage =
+    confirmation === "success"
+      ? "Email berhasil dikonfirmasi. Silakan masuk dengan akun Anda."
+      : confirmation === "error"
+        ? "Konfirmasi email gagal atau tautannya sudah kedaluwarsa."
+        : undefined;
+
+  const [message, setMessage] = useState(initialMessage ?? confirmationMessage ?? "");
+  const [isSuccess, setIsSuccess] = useState(confirmation === "success");
+  const [loading, setLoading] = useState(false);
 
   const redirectTo = searchParams.get("redirectTo");
 
@@ -25,6 +35,7 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
     if (loading) return;
 
     setMessage("");
+    setIsSuccess(false);
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
@@ -36,6 +47,7 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
 
     if (!result.success) {
       setMessage(result.error ?? "Login gagal.");
+      setIsSuccess(false);
       return;
     }
 
@@ -105,7 +117,10 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
         </button>
 
         {message && (
-          <div className={styles.alert} role="alert">
+          <div
+            className={`${styles.alert} ${isSuccess ? styles.alertSuccess : ""}`}
+            role={isSuccess ? "status" : "alert"}
+          >
             <AlertCircleIcon size={18} className={styles.alertIcon} />
             <div className={styles.alertBody}>
               <span className={styles.alertText}>{message}</span>

@@ -79,17 +79,18 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT || 22 }}
           command_timeout: 5m
-          envs: NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,NEXT_PUBLIC_GEOAPIFY_MAPS_KEY,GEMINI_API_KEY,GEMINI_MODEL,GEOAPIFY_API_KEY
           script: |
             set -e
             export CI=true
 
             cd ${{ secrets.TARGET_DIR }}
 
-            echo "==> Extracting new build"
-            public rm -rf .next
-            tar --no-same-owner --no-same-permissions --touch -xzf build.tar.gz
-            rm -f build.tar.gz
+            echo "==> Extracting new build safely"
+            TMP_EXTRACT=$(mktemp -d)
+            tar -xzf build.tar.gz -C "$TMP_EXTRACT"
+            rm -rf .next
+            cp -rf --no-preserve=mode,ownership "$TMP_EXTRACT"/. .
+            rm -rf "$TMP_EXTRACT" build.tar.gz
 
             echo "==> Updating .env file"
             cat << 'EOF' > .env
@@ -126,4 +127,4 @@ jobs:
               fi
             fi
 
-            echo "==> Deployment Kasitronik ke CloudPanel Berhasil!"
+            echo "==> Deployment Kasitronik Successful!"

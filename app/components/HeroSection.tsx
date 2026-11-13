@@ -1,4 +1,5 @@
 import Image from "next/image";
+import HeroReportButton from "./HeroReportButton";
 import type { GalleryItem } from "../interfaces/gallery-item.interface";
 import styles from "../page.module.css";
 
@@ -77,9 +78,7 @@ export default function HeroSection() {
         </p>
 
         <div className={styles.actions}>
-          <a className={styles.primaryButton} href="#kategori">
-            Siapkan laporan
-          </a>
+          <HeroReportButton />
           <a className={styles.secondaryButton} href="#alur">
             Lihat cara kerja
           </a>

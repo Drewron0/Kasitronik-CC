@@ -32,10 +32,16 @@ export async function registerAction(payload: RegisterPayload): Promise<Register
     });
 
     if (error) {
+      const alreadyRegistered = error.code === "user_already_exists" || /already (been )?registered|already exists/i.test(error.message);
       return {
         success: false,
-        error: error.message,
+        alreadyRegistered,
+        error: alreadyRegistered ? "Email ini sudah terdaftar. Masuk atau verifikasi akun yang sudah ada." : "Pendaftaran gagal. Periksa data lalu coba lagi.",
       };
+    }
+
+    if (data.user?.identities?.length === 0) {
+      return { success: false, alreadyRegistered: true, error: "Email ini sudah terdaftar. Masuk atau verifikasi akun yang sudah ada." };
     }
 
     return {

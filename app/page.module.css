@@ -19,6 +19,12 @@
   max-width: 100vw;
 }
 
+.assessmentAction {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
 .home *,
 .home *::before,
 .home *::after {
@@ -226,14 +232,13 @@
 
 .secondaryButton {
   border: 1.5px solid rgba(4, 102, 69, 0.35);
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
+  background: var(--surface);
   color: var(--ink);
 }
 
 .secondaryButton:hover {
   border-color: var(--green);
-  background: #ffffff;
+  background: var(--sage-tint);
   color: var(--green);
   transform: translateY(-1px);
 }

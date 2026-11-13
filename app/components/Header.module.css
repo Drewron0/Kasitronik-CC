@@ -6,11 +6,10 @@
   z-index: 100;
   width: 100%;
   padding-block: 16px;
-  background: rgba(250, 249, 247, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 1px 0 rgba(225, 231, 222, 0.5);
-  transition: padding 0.2s ease, background-color 0.2s ease;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(28, 38, 33, 0.03);
+  transition: padding 0.2s ease;
 }
 
 .headerInner {
@@ -98,59 +97,180 @@
   gap: 20px;
 }
 
-.accountName {
+.accountDropdownContainer {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.accountDropdownTrigger {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  max-width: 200px;
+  background: none;
+  border: none;
+  padding: 6px 2px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.accountDropdownTrigger::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--green);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accountDropdownTrigger:hover::after,
+.accountDropdownTrigger[aria-expanded="true"]::after {
+  transform: scaleX(1);
+}
+
+.accountGreeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+}
+
+.accountDisplayName {
+  color: var(--ink);
+  font-weight: 600;
+  max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--muted);
-  font-size: 14px;
+  transition: color 0.2s ease;
 }
 
-.accountName strong {
-  color: var(--ink);
+.accountDropdownTrigger:hover .accountDisplayName,
+.accountDropdownTrigger[aria-expanded="true"] .accountDisplayName {
+  color: var(--green);
+}
+
+.accountChevron {
+  display: inline-block;
+  color: var(--muted);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.accountChevronRotated {
+  transform: rotate(180deg);
+  color: var(--green);
+}
+
+.accountDropdownMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 220px;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 16px 36px -8px rgba(28, 38, 33, 0.12), 0 4px 12px rgba(28, 38, 33, 0.04);
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.97);
+  transform-origin: top right;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.22s;
+  pointer-events: none;
+}
+
+.accountDropdownOpen {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.dropdownHeader {
+  padding: 8px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropdownName {
+  font-size: 14px;
   font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.accountStatus {
+.dropdownEmail {
+  font-size: 12px;
   color: var(--muted);
-  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dropdownItem:hover {
+  background: var(--sage);
+  color: var(--green);
+}
+
+.dropdownItemDanger {
+  color: var(--muted);
+}
+
+.dropdownItemDanger:hover:not(:disabled) {
+  background: #fdf2f2;
+  color: var(--destructive);
+}
+
+.dropdownItemDanger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .accountError {
   color: var(--destructive);
   font-size: 13px;
   font-weight: 500;
-}
-
-.logoutButton {
-  display: inline-flex;
-  min-height: 38px;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.logoutButton:hover:not(:disabled) {
-  border-color: var(--destructive);
-  color: var(--destructive);
-  background: #fff5f5;
-}
-
-.logoutButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 @media (max-width: 640px) {

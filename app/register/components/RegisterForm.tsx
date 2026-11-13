@@ -4,7 +4,9 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
+import EnvelopeIcon from "@/app/components/icons/EnvelopeIcon";
 import { registerAction } from "../actions/register.action";
+import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import styles from "../../login/login.module.css";
 
 export default function RegisterForm() {
@@ -12,7 +14,9 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
 
   const hasMinLength = password.length >= 8;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -26,10 +30,10 @@ export default function RegisterForm() {
 
     setMessage("");
     setIsError(false);
+    setAlreadyRegistered(false);
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const confirmation = String(formData.get("confirmation") ?? "");
@@ -41,12 +45,7 @@ export default function RegisterForm() {
     }
 
     if (!isPasswordSecure) {
-      const missing: string[] = [];
-      if (!hasMinLength) missing.push("min. 8 karakter");
-      if (!hasUpperCase) missing.push("huruf besar (A-Z)");
-      if (!hasNumber) missing.push("angka (0-9)");
-      if (!hasSymbol) missing.push("simbol");
-      setMessage(`Kata sandi belum aman. Perlu: ${missing.join(", ")}.`);
+      setMessage("Kata sandi belum memenuhi kriteria keamanan.");
       setIsError(true);
       return;
     }
@@ -65,13 +64,46 @@ export default function RegisterForm() {
     if (!result.success) {
       setMessage(result.error ?? "Pendaftaran gagal.");
       setIsError(true);
+      setAlreadyRegistered(Boolean(result.alreadyRegistered));
       return;
     }
 
-    setMessage(result.message ?? "Pendaftaran berhasil.");
-    setIsError(false);
-    setPassword("");
-    form.reset();
+    setConfirmedEmail(email);
+  }
+
+  if (confirmedEmail) {
+    return (
+      <section className={styles.card} aria-labelledby="confirm-title">
+        <div className={styles.confirmState}>
+          <div className={styles.confirmIconWrap} aria-hidden="true">
+            <EnvelopeIcon size={30} />
+          </div>
+          <p className={styles.eyebrow}>KONFIRMASI EMAIL</p>
+          <h2 id="confirm-title" className={styles.confirmTitle}>
+            Periksa Email Anda
+          </h2>
+          <p className={styles.confirmText}>
+            Tautan konfirmasi telah dikirim ke <strong>{confirmedEmail}</strong>. Silakan periksa kotak masuk atau spam dan klik tautan untuk mengaktifkan akun Anda.
+          </p>
+
+          <Link
+            href="/login"
+            className={styles.submitButton}
+            style={{ textDecoration: "none" }}
+          >
+            Lanjut ke Halaman Masuk
+          </Link>
+
+          <button
+            type="button"
+            className={styles.secondaryAction}
+            onClick={() => setConfirmedEmail(null)}
+          >
+            Daftar dengan email lain
+          </button>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -83,6 +115,14 @@ export default function RegisterForm() {
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.socialAuth}>
+          <GoogleSignInButton />
+        </div>
+
+        <div className={styles.divider}>
+          <span>atau daftar dengan email</span>
+        </div>
+
         <div className={styles.field}>
           <label htmlFor="name">Nama lengkap</label>
           <input
@@ -182,9 +222,17 @@ export default function RegisterForm() {
           </p>
         )}
 
-        <p className={styles.switchAccount}>
-          Sudah punya akun? <Link href="/login">Masuk</Link>
-        </p>
+        {alreadyRegistered && (
+          <p className={styles.switchAccount}>
+            Sudah punya akun? <Link href="/login">Masuk sekarang</Link>.
+          </p>
+        )}
+
+        {!alreadyRegistered && (
+          <p className={styles.switchAccount}>
+            Sudah punya akun? <Link href="/login">Masuk</Link>
+          </p>
+        )}
       </form>
     </section>
   );

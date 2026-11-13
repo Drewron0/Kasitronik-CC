@@ -2,11 +2,12 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
 import { loginAction } from "../actions/login.action";
 import type { LoginFormProps } from "../interfaces/login-form-props.interface";
+import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import styles from "../login.module.css";
 
 export default function LoginForm({ initialMessage }: LoginFormProps) {
@@ -14,6 +15,9 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
   const [message, setMessage] = useState(initialMessage ?? "");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const redirectTo = searchParams.get("redirectTo");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,7 +38,7 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
       return;
     }
 
-    router.replace("/");
+    router.replace(redirectTo || "/");
   }
 
   return (
@@ -46,6 +50,14 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.socialAuth}>
+          <GoogleSignInButton redirectTo={redirectTo || undefined} />
+        </div>
+
+        <div className={styles.divider}>
+          <span>atau masuk dengan email</span>
+        </div>
+
         <div className={styles.field}>
           <label htmlFor="email">Email</label>
           <input
@@ -98,7 +110,7 @@ export default function LoginForm({ initialMessage }: LoginFormProps) {
         )}
 
         <p className={styles.switchAccount}>
-          Belum punya akun? <Link href="/register">Daftar</Link>
+          Belum punya akun? <Link href="/register">Daftar sekarang</Link>
         </p>
       </form>
     </section>

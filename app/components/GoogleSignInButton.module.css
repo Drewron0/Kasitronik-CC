@@ -1,0 +1,44 @@
+.button {
+  display: flex;
+  width: 100%;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border: 1px solid var(--border, #e1e7de);
+  border-radius: 48px;
+  background: var(--surface, #fff);
+  color: var(--ink, #1c2621);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.button:hover {
+  background: var(--sage, #e8f2e8);
+  border-color: #c9d6c4;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--green, #046645);
+  outline-offset: 2px;
+}
+
+.message {
+  margin: 12px 0 0;
+  color: #a12d24;
+  font-size: 13px;
+  line-height: 1.6;
+}

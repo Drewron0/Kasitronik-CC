@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -26,7 +27,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
       <div className={styles.content}>
         <LoginIntro />
-        <LoginForm initialMessage={initialMessage} />
+        <Suspense fallback={<div className={styles.card}>Memuat formulir...</div>}>
+          <LoginForm initialMessage={initialMessage} />
+        </Suspense>
       </div>
 
       <Footer showBackToTop={false} />

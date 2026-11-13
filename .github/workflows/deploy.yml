@@ -87,7 +87,7 @@ jobs:
             cd ${{ secrets.TARGET_DIR }}
 
             echo "==> Extracting new build"
-            rm -rf .next
+            public rm -rf .next
             tar --no-same-owner --no-same-permissions --touch -xzf build.tar.gz
             rm -f build.tar.gz
 

@@ -23,4 +23,7 @@ export interface SubmissionItem {
   pickup_instructions: string | null;
   collector_name: string | null;
   collector_phone: string | null;
+  collector_rating: number | null;
+  collector_review: string | null;
+  rated_at: string | null;
 }

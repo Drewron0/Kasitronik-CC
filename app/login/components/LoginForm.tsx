@@ -16,7 +16,6 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const isRegistered = searchParams.get("registered") === "true";
   const redirectTo = searchParams.get("redirectTo");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -49,27 +48,14 @@ export default function LoginForm() {
         <p>Masukkan email dan kata sandi untuk masuk.</p>
       </div>
 
-      {isRegistered && !message && (
-        <div
-          role="status"
-          style={{
-            marginBottom: "20px",
-            padding: "12px 16px",
-            background: "var(--sage, #e8f2e8)",
-            border: "1px solid var(--border, #e1e7de)",
-            borderRadius: "10px",
-            color: "var(--green, #046645)",
-            fontSize: "13px",
-            fontWeight: 500,
-            lineHeight: 1.5,
-          }}
-        >
-          Pendaftaran berhasil. Silakan masukkan email dan kata sandi Anda untuk masuk.
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className={styles.form}>
-        <GoogleSignInButton redirectTo={redirectTo || undefined} />
+        <div className={styles.socialAuth}>
+          <GoogleSignInButton redirectTo={redirectTo || undefined} />
+        </div>
+
+        <div className={styles.divider}>
+          <span>atau masuk dengan email</span>
+        </div>
 
         <div className={styles.field}>
           <label htmlFor="email">Email</label>
@@ -123,7 +109,7 @@ export default function LoginForm() {
         )}
 
         <p className={styles.switchAccount}>
-          Belum punya akun? <Link href="/register">Daftar</Link>
+          Belum punya akun? <Link href="/register">Daftar sekarang</Link>
         </p>
       </form>
     </section>

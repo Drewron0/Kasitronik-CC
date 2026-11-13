@@ -2,21 +2,21 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import EyeIcon from "@/app/components/icons/EyeIcon";
 import EyeOffIcon from "@/app/components/icons/EyeOffIcon";
+import EnvelopeIcon from "@/app/components/icons/EnvelopeIcon";
 import { registerAction } from "../actions/register.action";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import styles from "../../login/login.module.css";
 
 export default function RegisterForm() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
 
   const hasMinLength = password.length >= 8;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -68,14 +68,42 @@ export default function RegisterForm() {
       return;
     }
 
-    setMessage(result.message ?? "Pendaftaran berhasil. Mengarahkan ke halaman masuk...");
-    setIsError(false);
-    setPassword("");
-    form.reset();
+    setConfirmedEmail(email);
+  }
 
-    setTimeout(() => {
-      router.push("/login?registered=true");
-    }, 700);
+  if (confirmedEmail) {
+    return (
+      <section className={styles.card} aria-labelledby="confirm-title">
+        <div className={styles.confirmState}>
+          <div className={styles.confirmIconWrap} aria-hidden="true">
+            <EnvelopeIcon size={30} />
+          </div>
+          <p className={styles.eyebrow}>KONFIRMASI EMAIL</p>
+          <h2 id="confirm-title" className={styles.confirmTitle}>
+            Periksa Email Anda
+          </h2>
+          <p className={styles.confirmText}>
+            Tautan konfirmasi telah dikirim ke <strong>{confirmedEmail}</strong>. Silakan periksa kotak masuk atau spam dan klik tautan untuk mengaktifkan akun Anda.
+          </p>
+
+          <Link
+            href="/login"
+            className={styles.submitButton}
+            style={{ textDecoration: "none" }}
+          >
+            Lanjut ke Halaman Masuk
+          </Link>
+
+          <button
+            type="button"
+            className={styles.secondaryAction}
+            onClick={() => setConfirmedEmail(null)}
+          >
+            Daftar dengan email lain
+          </button>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -87,7 +115,13 @@ export default function RegisterForm() {
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        <GoogleSignInButton />
+        <div className={styles.socialAuth}>
+          <GoogleSignInButton />
+        </div>
+
+        <div className={styles.divider}>
+          <span>atau daftar dengan email</span>
+        </div>
 
         <div className={styles.field}>
           <label htmlFor="name">Nama lengkap</label>
@@ -188,11 +222,17 @@ export default function RegisterForm() {
           </p>
         )}
 
-        {alreadyRegistered && <p className={styles.switchAccount}>Sudah punya akun? <Link href="/login">Masuk sekarang</Link>.</p>}
+        {alreadyRegistered && (
+          <p className={styles.switchAccount}>
+            Sudah punya akun? <Link href="/login">Masuk sekarang</Link>.
+          </p>
+        )}
 
-        {!alreadyRegistered && <p className={styles.switchAccount}>
-          Sudah punya akun? <Link href="/login">Masuk</Link>
-        </p>}
+        {!alreadyRegistered && (
+          <p className={styles.switchAccount}>
+            Sudah punya akun? <Link href="/login">Masuk</Link>
+          </p>
+        )}
       </form>
     </section>
   );

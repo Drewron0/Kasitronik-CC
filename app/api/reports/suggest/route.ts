@@ -1,4 +1,5 @@
 import { suggestDetails } from "@/lib/ai/suggest-details";
+import { aiErrorResponse } from "@/lib/ai/error-response";
 import { failure, readReportRequest } from "@/lib/reports/request";
 
 export async function POST(request: Request) {
@@ -8,7 +9,8 @@ export async function POST(request: Request) {
   if (!process.env.GEMINI_API_KEY || !process.env.GEMINI_MODEL) return failure("AI belum tersedia. Anda tetap bisa mengisi manual.", 503);
   try {
     return Response.json({ suggestion: await suggestDetails(input.image) }, { headers: { "Cache-Control": "no-store" } });
-  } catch {
-    return failure("Saran AI belum berhasil. Coba lagi atau isi manual.", 502);
+  } catch (cause) {
+    const result = aiErrorResponse(cause);
+    return failure(result.error, result.status);
   }
 }

@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import AccountNav from "./AccountNav";
+import BrandLink from "./BrandLink";
 import type { HeaderProps } from "../interfaces/header-props.interface";
 import styles from "./Header.module.css";
 
@@ -11,17 +11,7 @@ export default function Header({
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
-        <Link href="/" className={styles.brand} aria-label="Kasitronik beranda">
-          <Image
-            src="/logo.svg"
-            alt="Kasitronik"
-            width={36}
-            height={36}
-            className={styles.brandLogo}
-            priority
-          />
-          <span>Kasitronik</span>
-        </Link>
+        <BrandLink />
 
         {variant === "auth" ? (
           <nav className={styles.nav} aria-label="Navigasi akun">

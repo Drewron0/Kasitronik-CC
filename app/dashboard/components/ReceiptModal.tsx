@@ -40,7 +40,7 @@ export default function ReceiptModal({ item, onClose }: ReceiptModalProps) {
 
   return (
     <div
-      className={styles.modalBackdrop}
+      className={`${styles.modalBackdrop} ${styles.receiptBackdrop}`}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();

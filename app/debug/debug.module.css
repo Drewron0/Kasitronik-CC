@@ -13,6 +13,8 @@
   --destructive-tint: #fbeee9;
 
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-geist-sans), Arial, sans-serif;

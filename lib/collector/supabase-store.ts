@@ -177,6 +177,9 @@ export function createSupabaseCollectorStore(db: SupabaseClient): CollectorStore
       if (!rows.length) return null;
       return Math.round((rows.reduce((sum, r) => sum + (r.collector_rating as number), 0) / rows.length) * 10) / 10;
     },
+    async insertProblem(problem) {
+      check(await db.from("problem_reports").insert({ submission_id: problem.submissionId, owner_id: problem.ownerId, message: problem.message }));
+    },
     async logNotification(entry) {
       check(await db.from("notification_log").insert({
         channel: entry.channel, kind: entry.kind, recipient: entry.recipient, payload: entry.payload,

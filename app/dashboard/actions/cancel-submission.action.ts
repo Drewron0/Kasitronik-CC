@@ -1,51 +1,8 @@
-import { supabase } from "@/lib/supabase";
+import { ownerRequest } from "./owner-request";
+import type { OwnerActionResult } from "../interfaces/owner-action-result.interface";
 
-export interface CancelSubmissionResult {
-  success: boolean;
-  error?: string;
-}
-
-export async function cancelSubmissionAction(
-  submissionId: string
-): Promise<CancelSubmissionResult> {
-  try {
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
-      return {
-        success: false,
-        error: "Sesi telah berakhir. Silakan masuk kembali.",
-      };
-    }
-
-    if (!submissionId) {
-      return {
-        success: false,
-        error: "ID laporan tidak valid.",
-      };
-    }
-
-    const { error } = await supabase
-      .from("item_submissions")
-      .update({ status: "cancelled" })
-      .eq("id", submissionId)
-      .eq("status", "pending");
-
-    if (error) {
-      return {
-        success: false,
-        error: "Gagal membatalkan laporan: " + error.message,
-      };
-    }
-
-    return { success: true };
-  } catch (cause) {
-    return {
-      success: false,
-      error: cause instanceof Error ? cause.message : "Terjadi kesalahan saat membatalkan laporan.",
-    };
-  }
+/** Cancels a pending or accepted report; the server tells the collector when one was assigned. */
+export async function cancelSubmissionAction(submissionId: string): Promise<OwnerActionResult> {
+  if (!submissionId) return { success: false, error: "ID laporan tidak valid." };
+  return ownerRequest(`/api/reports/${encodeURIComponent(submissionId)}/cancel`);
 }

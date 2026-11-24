@@ -41,6 +41,7 @@ export interface CollectorStore {
   deletePushTarget(endpoint: string): Promise<void>;
   getOwnerEmail(ownerId: string): Promise<string | null>;
   getCollectorRating(collectorId: string): Promise<number | null>;
+  insertProblem(problem: { submissionId: string; ownerId: string; message: string }): Promise<void>;
   logNotification(entry: NotificationEntry): Promise<void>;
   listRetryableNotifications(maxAttempts: number): Promise<NotificationEntry[]>;
   updateNotification(id: string, patch: Partial<NotificationEntry>): Promise<void>;

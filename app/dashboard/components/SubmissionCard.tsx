@@ -19,7 +19,7 @@ export default function SubmissionCard({
   onCancel,
 }: SubmissionCardProps) {
   const [imgError, setImgError] = useState(false);
-  const isPending = item.status === "pending";
+  const canCancel = item.status === "pending" || item.status === "accepted";
 
   return (
     <article
@@ -92,7 +92,7 @@ export default function SubmissionCard({
 
       {/* Card Actions di Bawah */}
       <div className={styles.cardActions}>
-        {isPending && (
+        {canCancel && (
           <button
             type="button"
             className={`${styles.actionButton} ${styles.cancelButton}`}

@@ -1,5 +1,22 @@
 import { supabase } from "@/lib/supabase";
 import type { SubmissionItem } from "../interfaces/submission-item.interface";
+import type { SubmissionCollector } from "../interfaces/submission-collector.interface";
+
+/** Collector name, phone and rating per submission, through the owner-scoped SQL function. */
+async function loadCollectors(): Promise<Map<string, SubmissionCollector>> {
+  const { data, error } = await supabase.rpc("get_my_submission_collectors");
+  const map = new Map<string, SubmissionCollector>();
+  if (error || !Array.isArray(data)) return map;
+  for (const row of data) {
+    map.set(row.submission_id, {
+      name: row.collector_name,
+      phone: row.collector_phone,
+      rating: row.collector_rating === null ? null : Number(row.collector_rating),
+      completedJobs: row.completed_jobs ?? 0,
+    });
+  }
+  return map;
+}
 
 export interface GetSubmissionsResult {
   success: boolean;
@@ -37,6 +54,8 @@ export async function getUserSubmissionsAction(): Promise<GetSubmissionsResult> 
       return { success: true, data: [] };
     }
 
+    const collectors = await loadCollectors();
+
     // Generate signed URLs for private photos in batch/parallel
     const itemsWithPhotos: SubmissionItem[] = await Promise.all(
       data.map(async (row) => {
@@ -52,6 +71,7 @@ export async function getUserSubmissionsAction(): Promise<GetSubmissionsResult> 
         return {
           ...row,
           photo_url,
+          collector: collectors.get(row.id) ?? null,
         } as SubmissionItem;
       })
     );

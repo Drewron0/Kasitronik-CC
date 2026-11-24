@@ -1,4 +1,4 @@
 export interface HeaderProps {
-  variant?: "home" | "auth";
+  variant?: "home" | "auth" | "minimal";
   currentAuthPage?: "login" | "register";
 }

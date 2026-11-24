@@ -1,4 +1,5 @@
 import type { SubmissionStatus } from "./submission-status.type";
+import type { SubmissionCollector } from "./submission-collector.interface";
 
 export interface SubmissionItem {
   id: string;
@@ -21,8 +22,13 @@ export interface SubmissionItem {
   pickup_longitude: number | null;
   pickup_address: string | null;
   pickup_instructions: string | null;
-  collector_name: string | null;
-  collector_phone: string | null;
+  owner_phone: string | null;
+  pickup_district: string | null;
+  handover_code: string | null;
+  agreed_price_idr: number | null;
+  claimed_at: string | null;
+  completed_at: string | null;
+  collector: SubmissionCollector | null;
   collector_rating: number | null;
   collector_review: string | null;
   rated_at: string | null;

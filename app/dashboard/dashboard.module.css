@@ -1180,3 +1180,22 @@
     justify-content: center;
   }
 }
+
+/* Collector, handover code, rating and problem report */
+.collectorPanel { display: flex; flex-direction: column; gap: 16px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--sage-tint); }
+.collectorRow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.collectorMeta { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.handoverCard { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 16px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); }
+.handoverCode { font-family: var(--font-geist-mono), monospace; font-size: 32px; font-weight: 700; letter-spacing: 0.3em; color: var(--green); }
+.ratingForm { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.ratingScores { display: flex; gap: 8px; }
+.ratingScore { min-width: 44px; min-height: 44px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+.ratingScore[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: #ffffff; }
+.textArea { width: 100%; min-width: 0; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px; resize: vertical; }
+.textArea[aria-invalid="true"] { border-color: var(--destructive); }
+.fieldErrorText { margin: 0; color: var(--destructive); font-size: 13px; line-height: 1.6; }
+.statusText { margin: 0; color: var(--green); font-size: 14px; font-weight: 600; }
+.primaryActionButton { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--green); background: var(--green); color: #ffffff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.primaryActionButton:hover:not(:disabled) { background: var(--green-hover); }
+.primaryActionButton:disabled { opacity: 0.6; cursor: not-allowed; }
+.modalNarrow { max-width: 480px; }

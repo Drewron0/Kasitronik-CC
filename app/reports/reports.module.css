@@ -71,3 +71,8 @@
 .result h2 { margin-top: 16px; }
 .result p { margin: 16px 0 24px; font-size: 14px; }
 .result :is(a, button):focus-visible { outline: 3px solid var(--green); outline-offset: 4px; }
+.phoneField { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 400px; }
+.phoneField label { font-size: 14px; font-weight: 600; }
+.phoneField input { width: 100%; min-width: 0; min-height: 48px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px; }
+.phoneField input[aria-invalid="true"] { border-color: var(--destructive); }
+.fieldError { margin: 0; color: var(--destructive); font-size: 13px; line-height: 1.6; }

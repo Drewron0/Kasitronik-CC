@@ -4,18 +4,20 @@ import { readFile } from "node:fs/promises";
 import ts from "typescript";
 import { parseSubmission } from "../app/reports/item-details.ts";
 import { parsePickupLocation } from "../app/location/location.ts";
+import { parseOwnerPhone } from "../app/reports/owner-phone.ts";
 
 const source = await readFile(new URL("../app/api/reports/route.ts", import.meta.url), "utf8");
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const id = "12345678-1234-4123-8123-123456789012";
 const ownerId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
-function setup({ existing = false, uploadError = null, insertError = null, preflightError = null, appearedAfterInsert = false } = {}) {
-  const calls = { uploads: [], inserts: [], removals: [] };
+function setup({ existing = false, uploadError = null, insertError = null, preflightError = null, appearedAfterInsert = false, ownerPhone = "0812 3456 7890", dispatchError = false } = {}) {
+  const calls = { uploads: [], inserts: [], removals: [], dispatches: [] };
   let reads = 0;
   const form = new FormData();
   for (const [key, value] of Object.entries({ pickupLatitude: "-7.25", pickupLongitude: "112.75", pickupAddress: "Alamat pengujian", pickupInstructions: "Gerbang depan", locationConfirmed: "yes" })) form.set(key, value);
-  for (const [key, value] of Object.entries({ submissionId: id, category: "phones", itemName: "Ponsel", condition: "dead", quantity: "1", weightKind: "unknown", confirmed: "yes", owner_id: "forged", status: "approved" })) form.set(key, value);
+  for (const [key, value] of Object.entries({ submissionId: id, category: "phones", itemName: "Ponsel", condition: "dead", quantity: "1", weightKind: "unknown", confirmed: "yes", owner_id: "forged", status: "approved", collector_id: "forged", handover_code: "1111", agreed_price_idr: "5" })) form.set(key, value);
+  if (ownerPhone !== null) form.set("ownerPhone", ownerPhone);
   const client = {
     from(table) {
       assert.equal(table, "item_submissions");
@@ -39,6 +41,17 @@ function setup({ existing = false, uploadError = null, insertError = null, prefl
   const dependencies = {
     "@/app/reports/item-details": { parseSubmission },
     "@/app/location/location": { parsePickupLocation },
+    "@/app/reports/owner-phone": { parseOwnerPhone },
+    "@/lib/collector/handover": { createHandoverCode: () => "0427" },
+    "@/lib/location/reverse-district": { reverseDistrict: async () => "Tembalang" },
+    "@/lib/collector/server": { getCollectorContext: () => ({ marker: "ctx" }) },
+    "@/lib/collector/services/dispatch": {
+      dispatchWave: async (ctx, submissionId) => {
+        calls.dispatches.push({ ctx, submissionId });
+        if (dispatchError) throw new Error("push service down");
+        return { offered: 3 };
+      },
+    },
     "@/lib/reports/request": {
       readReportRequest: async () => ({ client, ownerId, form, image: Buffer.from("normalized JPEG") }),
       failure: (error, status) => Response.json({ error }, { status }),
@@ -90,4 +103,38 @@ test("missing schema or failed upload never inserts a row", async () => {
     assert.equal((await run()).status, 503);
     assert.equal(calls.inserts.length, 0);
   }
+});
+
+test("submission stores normalized owner phone, district and a server handover code", async () => {
+  const { calls, run } = setup();
+  assert.equal((await run()).status, 200);
+  const row = calls.inserts[0];
+  assert.equal(row.owner_phone, "6281234567890");
+  assert.equal(row.pickup_district, "Tembalang");
+  assert.equal(row.handover_code, "0427");
+  assert.equal("collector_id" in row, false);
+  assert.equal("agreed_price_idr" in row, false);
+  assert.deepEqual(calls.dispatches.map(d => d.submissionId), [id]);
+});
+
+test("missing owner phone is rejected before any upload", async () => {
+  const { calls, run } = setup({ ownerPhone: null });
+  const response = await run();
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { error: "Isi nomor WhatsApp yang aktif, contoh 0812 3456 7890." });
+  assert.equal(calls.uploads.length, 0);
+});
+
+test("dispatch failure never fails a saved submission", async () => {
+  const { calls, run } = setup({ dispatchError: true });
+  const response = await run();
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { id, status: "pending" });
+  assert.equal(calls.inserts.length, 1);
+});
+
+test("retries of an existing submission do not dispatch again", async () => {
+  const { calls, run } = setup({ existing: true });
+  assert.equal((await run()).status, 200);
+  assert.equal(calls.dispatches.length, 0);
 });

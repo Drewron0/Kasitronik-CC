@@ -1,0 +1,11 @@
+export const WAVE_SIZE = 3;
+export const WAVE_INTERVAL_MINUTES = 30;
+export const MAX_WAVES = 3;
+export const RADIUS_MIN_KM = 1;
+export const RADIUS_MAX_KM = 30;
+export const HANDOVER_MAX_ATTEMPTS = 5;
+export const HANDOVER_LOCK_MINUTES = 15;
+export const NOTIFY_MAX_ATTEMPTS = 3;
+export const DIGEST_HOURS_WIB = [8, 16];
+export const PRICE_MAX_IDR = 100_000_000;
+export const MAX_AREAS = 5;

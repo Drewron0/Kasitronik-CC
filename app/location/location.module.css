@@ -26,3 +26,16 @@
 .status:empty { display: none; }
 .attribution { color: var(--muted); font-size: 12px; align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; }
 @media (max-width: 480px) { .map { height: 300px; } }
+
+/* Area list field (collector pickup areas) */
+.areaField { display: flex; flex-direction: column; gap: 12px; }
+.areaList { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.areaItem { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+.areaRemove { min-height: 44px; padding: 8px 0; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
+.areaAddRow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.areaRadius { display: flex; flex: 1; min-width: 120px; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 600; }
+.areaRadius input { width: 100%; min-height: 48px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px; }
+.areaRadius input[aria-invalid="true"] { border-color: var(--destructive); }
+.areaAdd { min-height: 48px; padding: 12px 24px; border: 1px solid var(--border); border-radius: 48px; background: var(--surface); color: var(--green); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+.areaAdd:disabled { opacity: 0.6; cursor: not-allowed; }
+.areaError { margin: 0; color: var(--destructive); font-size: 13px; }

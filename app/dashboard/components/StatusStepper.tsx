@@ -9,8 +9,7 @@ interface StatusStepperProps {
 const STEPS: { key: SubmissionStatus; label: string; stepNumber: number }[] = [
   { key: "pending", label: STATUS_LABELS.pending, stepNumber: 1 },
   { key: "accepted", label: STATUS_LABELS.accepted, stepNumber: 2 },
-  { key: "picked_up", label: STATUS_LABELS.picked_up, stepNumber: 3 },
-  { key: "completed", label: STATUS_LABELS.completed, stepNumber: 4 },
+  { key: "completed", label: STATUS_LABELS.completed, stepNumber: 3 },
 ];
 
 function getStepIndex(status: SubmissionStatus): number {
@@ -20,9 +19,10 @@ function getStepIndex(status: SubmissionStatus): number {
     case "accepted":
       return 1;
     case "picked_up":
-      return 2;
+      // Legacy rows from before the handover code; the new flow goes straight to completed.
+      return 1;
     case "completed":
-      return 3;
+      return 2;
     default:
       return -1;
   }

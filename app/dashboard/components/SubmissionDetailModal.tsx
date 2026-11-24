@@ -11,6 +11,9 @@ import {
 } from "../utils/formatters";
 import StatusStepper from "./StatusStepper";
 import ReceiptModal from "./ReceiptModal";
+import CollectorPanel from "./CollectorPanel";
+import RatingForm from "./RatingForm";
+import ProblemReportModal from "./ProblemReportModal";
 import styles from "../dashboard.module.css";
 
 interface SubmissionDetailModalProps {
@@ -26,6 +29,7 @@ export default function SubmissionDetailModal({
 }: SubmissionDetailModalProps) {
   const [failedPhotoId, setFailedPhotoId] = useState<string | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
+  const [problemFor, setProblemFor] = useState<string | null>(null);
 
   useEffect(() => {
     if (!item) return;
@@ -91,6 +95,9 @@ export default function SubmissionDetailModal({
               <StatusStepper status={item.status} />
             </div>
 
+            <CollectorPanel item={item} />
+            <RatingForm key={item.id} item={item} />
+
             {/* Photo Preview if available */}
             {item.photo_url && !isImgError ? (
               <div className={styles.modalPhotoWrapper}>
@@ -125,7 +132,7 @@ export default function SubmissionDetailModal({
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Jumlah & Estimasi Berat</span>
                 <span className={styles.detailValue}>
-                  {item.quantity} Unit • {formatWeight(item)}
+                  {item.quantity} Unit - {formatWeight(item)}
                 </span>
               </div>
 
@@ -191,7 +198,13 @@ export default function SubmissionDetailModal({
               </button>
             ) : null}
 
-            {item.status === "pending" && onRequestCancel ? (
+            {(item.status === "accepted" || item.status === "completed") && item.collector ? (
+              <button type="button" className={styles.actionButton} onClick={() => setProblemFor(item.id)}>
+                Laporkan masalah
+              </button>
+            ) : null}
+
+            {(item.status === "pending" || item.status === "accepted") && onRequestCancel ? (
               <button
                 type="button"
                 className={`${styles.actionButton} ${styles.cancelButton}`}
@@ -229,6 +242,8 @@ export default function SubmissionDetailModal({
           </div>
         </div>
       </div>
+
+      <ProblemReportModal submissionId={problemFor} onClose={() => setProblemFor(null)} />
 
       {/* Render Receipt Modal */}
       {showReceipt && (

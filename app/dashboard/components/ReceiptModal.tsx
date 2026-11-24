@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import type { SubmissionItem } from "../interfaces/submission-item.interface";
+import { escapeHtml } from "../utils/escape-html";
+import { formatPriceLabel } from "../rating";
 import {
   formatCategory,
   formatCondition,
@@ -253,6 +255,15 @@ export default function ReceiptModal({ item, onClose }: ReceiptModalProps) {
               `
                   : ""
               }
+              ${
+                item.collector
+                  ? `<tr><td class="col-label">Pengepul</td><td class="col-value">${escapeHtml(item.collector.name)}</td></tr>`
+                  : ""
+              }
+              <tr>
+                <td class="col-label">Harga Disepakati</td>
+                <td class="col-value">${escapeHtml(formatPriceLabel(item.agreed_price_idr))}</td>
+              </tr>
               <tr>
                 <td class="col-label">Status Verifikasi</td>
                 <td class="col-value status-verified">Selesai & Terverifikasi</td>
@@ -407,6 +418,16 @@ export default function ReceiptModal({ item, onClose }: ReceiptModalProps) {
                   </span>
                 </div>
               ) : null}
+              {item.collector ? (
+                <div className={styles.receiptRow}>
+                  <span className={styles.receiptColLabel}>Pengepul</span>
+                  <span className={styles.receiptColValue}>{item.collector.name}</span>
+                </div>
+              ) : null}
+              <div className={styles.receiptRow}>
+                <span className={styles.receiptColLabel}>Harga Disepakati</span>
+                <span className={styles.receiptColValue}>{formatPriceLabel(item.agreed_price_idr)}</span>
+              </div>
               <div className={styles.receiptRow}>
                 <span className={styles.receiptColLabel}>Status Verifikasi</span>
                 <span

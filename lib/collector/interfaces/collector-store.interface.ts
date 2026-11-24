@@ -28,7 +28,7 @@ export interface CollectorStore {
   /** Applies the patch only when every expected field matches; true when exactly one row changed. */
   updateSubmissionIf(
     id: string,
-    expected: { status?: string; collectorId?: string | null },
+    expected: { status?: string; collectorId?: string | null; waveCount?: number },
     patch: Record<string, unknown>,
   ): Promise<boolean>;
   updateCollector(id: string, patch: Record<string, unknown>): Promise<void>;

@@ -141,6 +141,7 @@ export function createSupabaseCollectorStore(db: SupabaseClient): CollectorStore
       if (expected.status !== undefined) query = query.eq("status", expected.status);
       if (expected.collectorId === null) query = query.is("collector_id", null);
       else if (expected.collectorId !== undefined) query = query.eq("collector_id", expected.collectorId);
+      if (expected.waveCount !== undefined) query = query.eq("wave_count", expected.waveCount);
       // The conditional UPDATE is atomic in Postgres, so only one concurrent caller can match.
       const data = check(await query.select("id"));
       return (data ?? []).length === 1;

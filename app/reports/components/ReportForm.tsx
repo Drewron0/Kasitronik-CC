@@ -11,6 +11,9 @@ import type { ItemDetails } from "../interfaces/item-details.interface";
 import type { ItemSuggestion } from "../interfaces/item-suggestion.interface";
 import ItemFields from "./ItemFields";
 import SuggestionPreview from "./SuggestionPreview";
+import OwnerPhoneField from "./OwnerPhoneField";
+import { getLastOwnerPhone } from "../actions/get-last-owner-phone.action";
+import { OWNER_PHONE_ERROR, parseOwnerPhone } from "../owner-phone";
 import LocationFields from "@/app/location/components/LocationFields";
 import { emptyLocation, parsePickupLocation } from "@/app/location/location";
 import type { PickupLocation } from "@/app/location/interfaces/pickup-location.interface";
@@ -33,6 +36,8 @@ export default function ReportForm() {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [savedId, setSavedId] = useState("");
+  const [ownerPhone, setOwnerPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -40,6 +45,7 @@ export default function ReportForm() {
         router.replace("/login?redirectTo=/reports/new");
       } else {
         setSignedIn(true);
+        getLastOwnerPhone().then(phone => setOwnerPhone(current => current || phone));
       }
     });
 
@@ -119,6 +125,7 @@ export default function ReportForm() {
     if (loading) return;
     setError("");
     setStatus("");
+    setPhoneError("");
     if (!signedIn || !photo) {
       setError("Masuk dan pilih foto sebelum submit barang.");
       return;
@@ -135,11 +142,15 @@ export default function ReportForm() {
       form.set("pickupAddress", location.address);
       form.set("pickupInstructions", location.instructions);
       form.set("locationConfirmed", location.confirmed ? "yes" : "no");
+      form.set("ownerPhone", ownerPhone);
       try {
         parseSubmission(form);
         parsePickupLocation(form);
+        parseOwnerPhone(form);
       } catch (cause) {
-        setError((cause as Error).message);
+        const message = (cause as Error).message;
+        if (message === OWNER_PHONE_ERROR) setPhoneError(message);
+        else setError(message);
         return;
       }
     }
@@ -237,6 +248,15 @@ export default function ReportForm() {
         signedIn={signedIn === true}
       />
       <div className={styles.submitArea}>
+        <OwnerPhoneField
+          value={ownerPhone}
+          error={phoneError}
+          disabled={Boolean(loading || pending)}
+          onChange={value => {
+            setOwnerPhone(value);
+            setPhoneError("");
+          }}
+        />
         <label className={styles.consent}>
           <input
             type="checkbox"

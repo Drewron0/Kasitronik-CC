@@ -56,6 +56,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
           GEOAPIFY_API_KEY: ${{ secrets.GEOAPIFY_API_KEY }}
+          NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}
         run: pnpm run build
 
       - name: Compress Build Artifacts
@@ -100,6 +101,18 @@ jobs:
             GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
             GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}
             GEOAPIFY_API_KEY=${{ secrets.GEOAPIFY_API_KEY }}
+            SUPABASE_SECRET_KEY=${{ secrets.SUPABASE_SECRET_KEY }}
+            NEXT_PUBLIC_VAPID_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}
+            VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
+            VAPID_SUBJECT=${{ secrets.VAPID_SUBJECT }}
+            SMTP_HOST=${{ secrets.SMTP_HOST }}
+            SMTP_PORT=${{ secrets.SMTP_PORT }}
+            SMTP_USER=${{ secrets.SMTP_USER }}
+            SMTP_PASS=${{ secrets.SMTP_PASS }}
+            EMAIL_FROM=${{ secrets.EMAIL_FROM }}
+            ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+            CRON_SECRET=${{ secrets.CRON_SECRET }}
+            APP_BASE_URL=${{ secrets.APP_BASE_URL }}
             EOF
 
             echo "==> Checking pnpm & installing production dependencies"

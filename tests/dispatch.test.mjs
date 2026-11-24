@@ -28,7 +28,7 @@ test("dispatch offers the three nearest and stores tokens hashed", async () => {
     collector("mid", { areas: area(-7.06, 110.44) }),
     collector("fourth", { areas: area(-7.12, 110.44) }),
   ]);
-  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 3 });
+  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 3, wave: 1 });
   assert.deepEqual(notifier.pushes.map(p => p.target.endpoint), ["https://push/near", "https://push/mid", "https://push/far"]);
   const stored = JSON.stringify(store.db.offers);
   for (const { payload } of notifier.pushes) {
@@ -47,14 +47,14 @@ test("second wave skips collectors already offered", async () => {
   const { store, notifier, ctx } = setup(["a", "b", "c", "d"].map(id => collector(id)));
   await dispatchWave(ctx, "sub-1");
   notifier.pushes.length = 0;
-  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 1 });
+  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 1, wave: 2 });
   assert.equal(store.db.offers.length, 4);
   assert.equal(store.db.offers.at(-1).wave, 2);
 });
 
 test("dispatch with no candidates offers nothing", async () => {
   const { store, notifier, ctx } = setup([collector("x", { paused: true })]);
-  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 0 });
+  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 0, wave: 1 });
   assert.equal(notifier.pushes.length, 0);
   assert.equal((await store.getSubmission("sub-1")).waveCount, 1);
 });
@@ -62,7 +62,7 @@ test("dispatch with no candidates offers nothing", async () => {
 test("dispatch ignores submissions that are no longer pending", async () => {
   const { store, ctx } = setup([collector("a")]);
   store.db.submissions[0].status = "accepted";
-  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 0 });
+  assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 0, wave: null });
   assert.equal(store.db.offers.length, 0);
 });
 

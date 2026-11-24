@@ -48,6 +48,11 @@ alter table public.item_submissions
   add column if not exists collector_review text check (collector_review is null or length(collector_review) <= 500),
   add column if not exists rated_at timestamptz;
 create index if not exists item_submissions_status_wave on public.item_submissions (status, last_wave_at);
+
+-- Reports already open before this migration need a code, or no collector could ever complete them.
+update public.item_submissions
+  set handover_code = lpad(floor(random() * 10000)::int::text, 4, '0')
+  where handover_code is null and status in ('pending', 'accepted');
 create index if not exists item_submissions_collector on public.item_submissions (collector_id);
 
 create table if not exists public.job_offers (
@@ -111,6 +116,9 @@ drop policy if exists "Submit own items" on public.item_submissions;
 create policy "Submit own items" on public.item_submissions for insert to authenticated
   with check (owner_id = (select auth.uid()) and status = 'pending'
     and collector_id is null and agreed_price_idr is null and claimed_at is null and completed_at is null
+    and collector_rating is null and collector_review is null and rated_at is null
+    and wave_count = 0 and last_wave_at is null and handover_attempts = 0 and handover_locked_until is null
+    and handover_code is not null
     and exists (select 1 from storage.objects where bucket_id = 'submission-photos' and name = photo_path));
 
 create or replace function public.get_my_submission_collectors()

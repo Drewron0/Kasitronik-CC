@@ -15,13 +15,11 @@ export default function OwnerPhoneField({ value, error, disabled, onChange }: Ow
         value={value}
         disabled={disabled}
         aria-invalid={Boolean(error)}
-        aria-describedby={error ? "ownerPhone-error" : "ownerPhone-hint"}
+        aria-describedby={error ? "ownerPhone-error" : undefined}
         required
         onChange={event => onChange(event.target.value)}
       />
-      {error
-        ? <p id="ownerPhone-error" className={styles.fieldError} role="alert">{error}</p>
-        : <p id="ownerPhone-hint" className={styles.hint}>Hanya untuk pengepul yang mengambil laporan Anda.</p>}
+      {error && <p id="ownerPhone-error" className={styles.fieldError} role="alert">{error}</p>}
     </div>
   );
 }

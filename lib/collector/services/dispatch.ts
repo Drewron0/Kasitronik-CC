@@ -2,6 +2,7 @@ import type { CollectorContext } from "../interfaces/collector-context.interface
 import { selectCandidates } from "../candidates.ts";
 import { areaCovers, distanceKm } from "../geo.ts";
 import { createAccessToken } from "../tokens.ts";
+import { MAX_WAVES, WAVE_INTERVAL_MINUTES } from "../rules.ts";
 import { offerPush } from "../../notifications/messages.ts";
 import { notifyCollector, safely } from "./notify.ts";
 
@@ -23,6 +24,12 @@ export async function dispatchWave(ctx: CollectorContext, submissionId: string):
   const point = { latitude: sub.latitude, longitude: sub.longitude };
   const offered = new Set(await store.listOfferedCollectorIds(submissionId));
   const candidates = selectCandidates(await store.listDispatchable(), point, offered);
+  if (!candidates.length) {
+    // Nobody left to ask: let the next tick alert the admin instead of waiting out the remaining waves.
+    const backdated = new Date(ctx.now.getTime() - WAVE_INTERVAL_MINUTES * 60_000).toISOString();
+    await store.updateSubmissionIf(submissionId, { status: "pending", waveCount: wave }, { wave_count: Math.max(wave, MAX_WAVES), last_wave_at: backdated });
+    return { offered: 0, wave };
+  }
   const offers = candidates.map(collector => ({ collector, ...createAccessToken() }));
   await store.insertOffers(offers.map(o => ({ submissionId, collectorId: o.collector.id, tokenHash: o.hash, wave })));
 

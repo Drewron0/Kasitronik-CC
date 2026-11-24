@@ -38,11 +38,11 @@ test("tick waits for the wave interval", async () => {
   assert.equal((await runDispatchTick(ctx(later(31)))).waves, 1);
 });
 
-test("tick escalates once after three waves", async () => {
+test("tick escalates once when nobody is left to ask", async () => {
   const { notifier, ctx } = setup({ collectors: [] });
-  for (const minute of [0, 31, 62]) await runDispatchTick(ctx(later(minute)));
+  await runDispatchTick(ctx(T0));
   assert.equal(notifier.emails.length, 0);
-  assert.deepEqual(await runDispatchTick(ctx(later(93))), { waves: 0, escalated: 1 });
+  assert.deepEqual(await runDispatchTick(ctx(later(5))), { waves: 0, escalated: 1 });
   assert.equal(notifier.emails.length, 1);
   assert.equal(notifier.emails[0].to, "admin@example.com");
   assert.match(notifier.emails[0].subject, /belum terambil/i);
@@ -104,4 +104,13 @@ test("cron secret", () => {
   assert.equal(verifyCronSecret(request(undefined), "s3cret-value"), false);
   assert.equal(verifyCronSecret(request(""), ""), false);
   assert.equal(verifyCronSecret(request("anything"), undefined), false);
+});
+
+test("tick escalates after three waves when collectors never claim", async () => {
+  const many = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map(id => collector(id));
+  const { notifier, ctx } = setup({ collectors: many });
+  for (const minute of [0, 31, 62]) assert.equal((await runDispatchTick(ctx(later(minute)))).waves, 1);
+  assert.equal(notifier.emails.length, 0);
+  assert.deepEqual(await runDispatchTick(ctx(later(93))), { waves: 0, escalated: 1 });
+  assert.equal(notifier.pushes.length, 9);
 });

@@ -56,7 +56,8 @@ test("dispatch with no candidates offers nothing", async () => {
   const { store, notifier, ctx } = setup([collector("x", { paused: true })]);
   assert.deepEqual(await dispatchWave(ctx, "sub-1"), { offered: 0, wave: 1 });
   assert.equal(notifier.pushes.length, 0);
-  assert.equal((await store.getSubmission("sub-1")).waveCount, 1);
+  // No collector left to ask: jump to the last wave so the next tick alerts the admin.
+  assert.equal((await store.getSubmission("sub-1")).waveCount, 3);
 });
 
 test("dispatch ignores submissions that are no longer pending", async () => {

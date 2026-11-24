@@ -6,12 +6,13 @@ import { notifyOwner, safely } from "./notify.ts";
 
 export async function releaseJob(ctx: CollectorContext, collectorId: string, submissionId: string): Promise<ReleaseResult> {
   const { store } = ctx;
-  // Backdating the last wave lets the next cron tick offer the job again right away.
+  // Restarting the wave count and backdating the last wave lets the next tick offer the job again right away;
+  // collectors who already had it stay excluded through their existing offers.
   const dueNow = new Date(ctx.now.getTime() - WAVE_INTERVAL_MINUTES * 60_000).toISOString();
   const released = await store.updateSubmissionIf(
     submissionId,
     { status: "accepted", collectorId },
-    { status: "pending", collector_id: null, claimed_at: null, last_wave_at: dueNow, handover_attempts: 0, handover_locked_until: null },
+    { status: "pending", collector_id: null, claimed_at: null, wave_count: 0, last_wave_at: dueNow, handover_attempts: 0, handover_locked_until: null },
   );
   if (!released) return { kind: "not_yours" };
 

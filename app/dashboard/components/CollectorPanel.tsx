@@ -24,7 +24,6 @@ export default function CollectorPanel({ item }: CollectorPanelProps) {
         <div className={styles.handoverCard}>
           <span className={styles.detailLabel}>Kode serah terima</span>
           <span className={styles.handoverCode}>{item.handover_code}</span>
-          <span className={styles.collectorMeta}>Berikan kode ini saat barang diserahkan.</span>
         </div>
       ) : null}
     </section>

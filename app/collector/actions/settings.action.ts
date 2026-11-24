@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getCollectorContext } from "@/lib/collector/server";
 import type { NotifyMode } from "@/lib/collector/interfaces/notify-mode.type";
 import { INVALID_LINK } from "../action-messages";
-import { validateAreas } from "../areas";
+import { validateAreas } from "@/lib/collector/areas";
 import { getCurrentCollector } from "../current-collector";
 import type { ActionResult } from "../interfaces/action-result.type";
 

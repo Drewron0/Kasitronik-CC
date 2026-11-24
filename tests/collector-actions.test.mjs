@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { claimMessage, completeMessage, INVALID_LINK, releaseMessage } from "../app/collector/action-messages.ts";
-import { validateAreas } from "../app/collector/areas.ts";
+import { validateAreas } from "../lib/collector/areas.ts";
 
 test("complete action maps wrong code to field error", () => {
   assert.deepEqual(completeMessage({ kind: "wrong_code", attemptsLeft: 3 }), { ok: false, field: "code", error: "Kode salah. Sisa 3 percobaan." });

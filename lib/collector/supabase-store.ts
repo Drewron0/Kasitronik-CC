@@ -8,7 +8,7 @@ import type { SubmissionForCollector } from "./interfaces/submission-for-collect
 
 type Row = Record<string, unknown>;
 
-const COLLECTOR_COLUMNS = "id, name, phone, active, paused, notify_mode, last_digest_at, created_at, collector_areas(center_latitude, center_longitude, radius_km)";
+export const COLLECTOR_COLUMNS = "id, name, phone, active, paused, notify_mode, last_digest_at, created_at, collector_areas(center_latitude, center_longitude, radius_km)";
 
 function weightLabel(row: Row): string {
   if (row.weight_kind === "actual") return `sekitar ${row.weight_kg} kg`;
@@ -16,7 +16,7 @@ function weightLabel(row: Row): string {
   return "berat belum diketahui";
 }
 
-function toCollector(row: Row): Collector {
+export function toCollector(row: Row): Collector {
   const areas = (row.collector_areas as Row[] | null) ?? [];
   return {
     id: row.id as string,
@@ -31,7 +31,7 @@ function toCollector(row: Row): Collector {
   };
 }
 
-function toSubmission(row: Row): SubmissionForCollector {
+export function toSubmission(row: Row): SubmissionForCollector {
   return {
     id: row.id as string,
     ownerId: row.owner_id as string,
@@ -83,7 +83,7 @@ function toNotification(row: Row): NotificationEntry {
   };
 }
 
-function check<T>(result: { data: T; error: { message: string } | null }): T {
+export function check<T>(result: { data: T; error: { message: string } | null }): T {
   if (result.error) throw new Error(result.error.message);
   return result.data;
 }

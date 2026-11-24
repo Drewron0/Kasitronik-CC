@@ -1,5 +1,5 @@
-import type { CollectorArea } from "../../lib/collector/interfaces/collector-area.interface.ts";
-import { MAX_AREAS, RADIUS_MAX_KM, RADIUS_MIN_KM } from "../../lib/collector/rules.ts";
+import type { CollectorArea } from "./interfaces/collector-area.interface.ts";
+import { MAX_AREAS, RADIUS_MAX_KM, RADIUS_MIN_KM } from "./rules.ts";
 import type { AreasValidation } from "./interfaces/areas-validation.type.ts";
 
 const finite = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);

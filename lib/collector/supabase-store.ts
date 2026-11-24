@@ -108,6 +108,15 @@ export function createSupabaseCollectorStore(db: SupabaseClient): CollectorStore
     async listPending() {
       return (check(await db.from("item_submissions").select("*").eq("status", "pending").order("created_at")) ?? []).map(toSubmission);
     },
+    async listHeldBy(collectorId) {
+      return (check(await db.from("item_submissions").select("*").eq("status", "accepted").eq("collector_id", collectorId).order("claimed_at")) ?? []).map(toSubmission);
+    },
+    async replaceAreas(collectorId, areas) {
+      check(await db.from("collector_areas").delete().eq("collector_id", collectorId));
+      if (areas.length) {
+        check(await db.from("collector_areas").insert(areas.map(a => ({ collector_id: collectorId, center_latitude: a.latitude, center_longitude: a.longitude, radius_km: a.radiusKm }))));
+      }
+    },
     async listOfferedCollectorIds(submissionId) {
       return (check(await db.from("job_offers").select("collector_id").eq("submission_id", submissionId)) ?? []).map(r => r.collector_id as string);
     },

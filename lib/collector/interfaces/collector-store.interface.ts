@@ -1,4 +1,5 @@
 import type { CandidateCollector } from "./candidate-collector.interface.ts";
+import type { CollectorArea } from "./collector-area.interface.ts";
 import type { Collector } from "./collector.interface.ts";
 import type { JobOffer } from "./job-offer.interface.ts";
 import type { JobOfferStatus } from "./job-offer-status.type.ts";
@@ -14,6 +15,9 @@ export interface CollectorStore {
   listDispatchable(): Promise<CandidateCollector[]>;
   getSubmission(id: string): Promise<SubmissionForCollector | null>;
   listPending(): Promise<SubmissionForCollector[]>;
+  /** Submissions a collector currently holds (status accepted). */
+  listHeldBy(collectorId: string): Promise<SubmissionForCollector[]>;
+  replaceAreas(collectorId: string, areas: CollectorArea[]): Promise<void>;
   listOfferedCollectorIds(submissionId: string): Promise<string[]>;
   /** Inserts offers, silently skipping (submission, collector) pairs that already exist. */
   insertOffers(rows: NewOffer[]): Promise<void>;

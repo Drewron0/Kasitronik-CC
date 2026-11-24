@@ -21,6 +21,8 @@ export function createMemoryStore(seed = {}) {
     async listDispatchable() { return db.collectors.filter(c => c.active); },
     async getSubmission(submissionId) { return db.submissions.find(s => s.id === submissionId) ?? null; },
     async listPending() { return db.submissions.filter(s => s.status === "pending"); },
+    async listHeldBy(collectorId) { return db.submissions.filter(s => s.status === "accepted" && s.collectorId === collectorId); },
+    async replaceAreas(collectorId, areas) { const row = db.collectors.find(c => c.id === collectorId); if (row) row.areas = structuredClone(areas); },
     async listOfferedCollectorIds(submissionId) { return db.offers.filter(o => o.submissionId === submissionId).map(o => o.collectorId); },
     async insertOffers(rows) {
       for (const row of rows) {

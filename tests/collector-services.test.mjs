@@ -177,3 +177,11 @@ test("failed email is logged for retry", async () => {
   assert.equal(failed[0].status, "failed");
   assert.equal(failed[0].attempts, 1);
 });
+
+test("collectors outside the area without an offer cannot see or claim a job", async () => {
+  const { store, ctx } = setup();
+  store.db.collectors.push(collector("far", { areas: [{ latitude: -6.2, longitude: 106.8, radiusKm: 5 }] }));
+  assert.equal((await buildJobView(ctx, "far", "sub-1")).state, "closed");
+  assert.equal((await claimSubmission(ctx, "far", "sub-1")).kind, "closed");
+  assert.equal((await store.getSubmission("sub-1")).status, "pending");
+});

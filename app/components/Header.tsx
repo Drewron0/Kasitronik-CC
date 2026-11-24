@@ -13,7 +13,7 @@ export default function Header({
       <div className={styles.headerInner}>
         <BrandLink />
 
-        {variant === "auth" ? (
+        {variant === "minimal" ? null : variant === "auth" ? (
           <nav className={styles.nav} aria-label="Navigasi akun">
             <Link href="/" className={styles.navLink}>
               Beranda

@@ -3,12 +3,15 @@ import type { CollectorContext } from "../interfaces/collector-context.interface
 import { createAccessToken } from "../tokens.ts";
 import { ownerClaimedEmail } from "../../notifications/messages.ts";
 import { notifyOwner, safely } from "./notify.ts";
+import { mayTakeOpenJob } from "./eligibility.ts";
 
 export async function claimSubmission(ctx: CollectorContext, collectorId: string, submissionId: string): Promise<ClaimResult> {
   const { store } = ctx;
   const before = await store.getSubmission(submissionId);
   if (!before) return { kind: "not_found" };
   if (before.status !== "pending") return before.collectorId === collectorId && before.status === "accepted" ? { kind: "claimed" } : before.status === "accepted" ? { kind: "taken" } : { kind: "closed" };
+
+  if (!(await mayTakeOpenJob(ctx, collectorId, before))) return { kind: "closed" };
 
   const won = await store.updateSubmissionIf(
     submissionId,

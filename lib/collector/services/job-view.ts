@@ -3,6 +3,7 @@ import type { JobSummary, JobView } from "../interfaces/job-view.type.ts";
 import type { SubmissionForCollector } from "../interfaces/submission-for-collector.interface.ts";
 import { distanceKm } from "../geo.ts";
 import { HANDOVER_MAX_ATTEMPTS } from "../rules.ts";
+import { mayTakeOpenJob } from "./eligibility.ts";
 
 function summary(sub: SubmissionForCollector, distance: number | null): JobSummary {
   return {
@@ -28,7 +29,9 @@ export async function buildJobView(ctx: CollectorContext, collectorId: string, s
   const distance = collector.areas.length ? Math.min(...collector.areas.map(area => distanceKm(area, point))) : null;
   const mine = sub.collectorId === collectorId;
 
-  if (sub.status === "pending") return { state: "open", ...summary(sub, distance) };
+  if (sub.status === "pending") {
+    return (await mayTakeOpenJob(ctx, collectorId, sub)) ? { state: "open", ...summary(sub, distance) } : { state: "closed" };
+  }
   if (sub.status === "accepted" && mine) {
     return {
       state: "mine",

@@ -1,0 +1,383 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+/* Same outer edges as the shared header; the reading column stays narrow for one-hand use. */
+.main {
+  flex: 1;
+  width: min(1200px, calc(100% - 48px));
+  margin-inline: auto;
+  padding-block: 32px 64px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 640px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heading h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.jobList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jobCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 72px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 150ms, transform 150ms;
+}
+
+.jobCard:hover {
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+
+.thumb {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--sage);
+}
+
+.jobText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.jobTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--sage);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fact {
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--sage);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.address {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border-radius: 48px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms, transform 100ms;
+}
+
+.primaryButton {
+  border: 0;
+  background: var(--green);
+  color: #fff;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--green-hover);
+}
+
+.secondaryButton {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--green);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: var(--sage);
+}
+
+.primaryButton:active:not(:disabled),
+.secondaryButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.textButton {
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.textButton:hover {
+  color: var(--ink);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--canvas);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.codeInput {
+  max-width: 160px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 24px;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
+.field input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+.fieldError,
+.error {
+  margin: 0;
+  color: var(--destructive);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.status {
+  margin: 0;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--canvas);
+}
+
+.segmented button {
+  flex: 1;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--sage);
+  color: var(--green);
+  font-weight: 600;
+}
+
+.areaList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.areaItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.radiusRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.radiusRow .field {
+  flex: 1;
+}
+
+.map {
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+@media (max-width: 640px) {
+  .main {
+    width: calc(100% - 24px);
+    padding-block: 24px 48px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .actions > .primaryButton,
+  .actions > .secondaryButton,
+  .form > .primaryButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jobCard,
+  .primaryButton,
+  .secondaryButton {
+    transition: none;
+  }
+
+  .jobCard:hover {
+    transform: none;
+  }
+}

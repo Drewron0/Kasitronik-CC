@@ -66,6 +66,17 @@ Strictly adhere to the design tokens and CSS variables used in the website (`app
 - **SVG Icons over Wordy Text**: Favor clean, inline/component SVG icons instead of clustering the interface with static labels or lengthy explanations.
 - **HIG Focus**: Maintain high signal-to-noise ratio, clear visual hierarchy, effortless cognitive scanability, and generous click/touch targets (min 44x44px).
 
+### Layout & Consistency Principles (adapted from taste-skill)
+- **Equal Content Edges**: Every page uses one shared content container (same max-width and side gutter). Header, page content and footer must start and end on the same left/right lines. Never give a single section its own ad-hoc horizontal margin or width.
+- **One Spacing Scale**: Use only spacing steps of 4/8/12/16/24/32/48/64px. Never mix arbitrary values (e.g. 18px, 22px, 37px) for margins, paddings or gaps.
+- **One System**: One primary + one secondary button style, one card style, one radius scale, one link style, one heading scale across all routes. Reuse existing classes before creating new ones.
+- **Two Boxes Deep at Most**: Never nest a card inside a card inside a card.
+- **One Main Action per Screen**: Each screen or card has one clear primary button; everything else is secondary.
+- **Copy**: Headings name a thing; buttons are a verb + object (e.g. "Ambil laporan", "Kirim laporan"), never vague ("Lanjut", "OK") when a specific verb fits.
+- **Errors at the Field**: Validation errors appear under the field they belong to; only server/network errors go in a form-level alert.
+- **Every Width Works**: Check 1440, 1024, 768, 390 and 320px. Nothing scrolls sideways, nothing overlaps, nothing hides under a fixed bar; on phones content is one column and primary buttons are full width.
+- **Quiet Motion**: Buttons and linked cards answer hover/press subtly; no parallax, tilt, carousels or scroll-jacking. Everything rests and stays visible under `prefers-reduced-motion`.
+
 ---
 
 ## 2. Architecture & Code Quality Rules

@@ -3,14 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { supabase } from "@/lib/supabase";
 import { ReportRequestError, requestSuggestions, submitReport } from "../actions/submit-report.action";
 import { emptyDetails, MAX_IMAGE_BYTES, mergeSuggestion, parseSubmission } from "../item-details";
 import type { ItemDetails } from "../interfaces/item-details.interface";
-import type { ItemSuggestion } from "../interfaces/item-suggestion.interface";
 import ItemFields from "./ItemFields";
-import SuggestionPreview from "./SuggestionPreview";
 import OwnerPhoneField from "./OwnerPhoneField";
 import { getLastOwnerPhone } from "../actions/get-last-owner-phone.action";
 import { OWNER_PHONE_ERROR, parseOwnerPhone } from "../owner-phone";
@@ -21,15 +19,16 @@ import styles from "../reports.module.css";
 
 export default function ReportForm() {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
+  const photoSeqRef = useRef(0);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [details, setDetails] = useState<ItemDetails>({ ...emptyDetails });
   const [location, setLocation] = useState<PickupLocation>({ ...emptyLocation });
-  const [mode, setMode] = useState("manual");
-  const [consent, setConsent] = useState(false);
+  const [mode, setMode] = useState("ai");
+  const [consent, setConsent] = useState(true);
   const [confirmed, setConfirmed] = useState(false);
-  const [suggestion, setSuggestion] = useState<ItemSuggestion | null>(null);
   const [suggested, setSuggested] = useState<string[]>([]);
   const [loading, setLoading] = useState<"suggest" | "submit" | null>(null);
   const [pending, setPending] = useState<FormData | null>(null);
@@ -65,6 +64,11 @@ export default function ReportForm() {
     if (preview) return () => URL.revokeObjectURL(preview);
   }, [preview]);
 
+  function showError(message: string) {
+    setError(message);
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function change(key: keyof ItemDetails, value: string) {
     setDetails(current => ({ ...current, [key]: value }));
     setSuggested(current => current.filter(field => field !== key && !(key.startsWith("weight") && field === "weightKind")));
@@ -72,52 +76,69 @@ export default function ReportForm() {
     setStatus("");
   }
 
+  function clearDetails() {
+    setDetails({ ...emptyDetails });
+    setSuggested([]);
+    setConfirmed(false);
+    setStatus("Detail barang dikosongkan.");
+  }
+
+  async function runDetect(targetPhoto: File, seq: number) {
+    if (!consent || !signedIn) return;
+    const form = new FormData();
+    form.set("photo", targetPhoto);
+    form.set("consent", "yes");
+    setLoading("suggest");
+    setError("");
+    setStatus("AI sedang membaca foto...");
+    try {
+      const result = await requestSuggestions(form);
+      if (seq !== photoSeqRef.current) return;
+      setDetails(current => {
+        const next = mergeSuggestion(current, result);
+        const changed = (Object.keys(next) as (keyof ItemDetails)[]).filter(key => next[key] !== current[key]);
+        setSuggested(prev => [...new Set([...prev, ...changed])]);
+        setStatus(
+          changed.length
+            ? "Detail barang diisi otomatis dari foto. Anda dapat mengubah atau menghapusnya."
+            : "Detail tambahan belum terbaca. Anda bisa mengisi formulir secara manual."
+        );
+        return next;
+      });
+      setConfirmed(false);
+    } catch (cause) {
+      if (seq !== photoSeqRef.current) return;
+      showError(cause instanceof Error && cause.name === "Error" ? cause.message : "AI tidak dapat dihubungi. Anda tetap bisa mengisi manual.");
+      setStatus("");
+    } finally {
+      if (seq === photoSeqRef.current) setLoading(null);
+    }
+  }
+
   function selectPhoto(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    const seq = ++photoSeqRef.current;
     setPhoto(null);
     setPreview("");
-    setSuggestion(null);
     setError("");
     setStatus("");
     setConfirmed(false);
     if (!file) return;
     if (!["image/jpeg", "image/png"].includes(file.type) || !file.size || file.size > MAX_IMAGE_BYTES) {
-      setError("Pilih foto JPEG atau PNG, maksimal 5 MB.");
+      showError("Pilih foto JPEG atau PNG, maksimal 5 MB.");
       event.target.value = "";
       return;
     }
     setPhoto(file);
     setPreview(URL.createObjectURL(file));
+    if (mode === "ai" && consent && signedIn) {
+      void runDetect(file, seq);
+    }
   }
 
   async function suggest() {
     if (!photo || !consent || !signedIn || loading) return;
-    const form = new FormData();
-    form.set("photo", photo);
-    form.set("consent", "yes");
-    setLoading("suggest");
-    setError("");
-    setStatus("");
-    setSuggestion(null);
-    try {
-      setSuggestion(await requestSuggestions(form));
-      setStatus("Saran tersedia. Periksa sebelum mengisi formulir.");
-    } catch (cause) {
-      setError(cause instanceof Error && cause.name === "Error" ? cause.message : "AI tidak dapat dihubungi. Anda tetap bisa mengisi manual.");
-    } finally {
-      setLoading(null);
-    }
-  }
-
-  function applySuggestion() {
-    if (!suggestion) return;
-    const next = mergeSuggestion(details, suggestion);
-    const changed = (Object.keys(next) as (keyof ItemDetails)[]).filter(key => next[key] !== details[key]);
-    setDetails(next);
-    setSuggested(current => [...new Set([...current, ...changed])]);
-    setSuggestion(null);
-    setConfirmed(false);
-    setStatus(changed.length ? "Saran diterapkan. Periksa detail dan pilih kondisi barang." : "Kolom yang sudah terisi tetap dipertahankan.");
+    await runDetect(photo, ++photoSeqRef.current);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -127,7 +148,7 @@ export default function ReportForm() {
     setStatus("");
     setPhoneError("");
     if (!signedIn || !photo) {
-      setError("Masuk dan pilih foto sebelum submit barang.");
+      showError("Masuk dan pilih foto sebelum submit barang.");
       return;
     }
     let form = pending;
@@ -150,7 +171,7 @@ export default function ReportForm() {
       } catch (cause) {
         const message = (cause as Error).message;
         if (message === OWNER_PHONE_ERROR) setPhoneError(message);
-        else setError(message);
+        else showError(message);
         return;
       }
     }
@@ -161,7 +182,7 @@ export default function ReportForm() {
       setPending(null);
     } catch (cause) {
       if (cause instanceof ReportRequestError && cause.status < 500) setPending(null);
-      setError(cause instanceof ReportRequestError ? cause.message : "Status kiriman belum dapat dipastikan. Coba kirim kembali dengan data yang sama.");
+      showError(cause instanceof ReportRequestError ? cause.message : "Status kiriman belum dapat dipastikan. Coba kirim kembali dengan data yang sama.");
     } finally {
       setLoading(null);
     }
@@ -182,7 +203,8 @@ export default function ReportForm() {
   }
 
   return (
-    <form className={styles.form} onSubmit={submit} aria-busy={Boolean(loading)}>
+    <form ref={formRef} className={styles.form} onSubmit={submit} aria-busy={Boolean(loading)}>
+      {error && <p className={styles.error} role="alert">{error}</p>}
       <fieldset disabled={Boolean(loading || pending)} className={styles.fields}>
         <div className={styles.uploadPanel}>
           <label htmlFor="photo">Foto barang</label>
@@ -205,34 +227,38 @@ export default function ReportForm() {
             Satu jenis barang. JPEG/PNG, maksimal 5 MB dan 20 megapiksel.
           </p>
           <div className={styles.modeSwitch} role="group" aria-label="Cara mengisi detail">
+            <button type="button" aria-pressed={mode === "ai"} onClick={() => setMode("ai")}>
+              Deteksi otomatis AI
+            </button>
             <button type="button" aria-pressed={mode === "manual"} onClick={() => setMode("manual")}>
               Isi manual
-            </button>
-            <button type="button" aria-pressed={mode === "ai"} onClick={() => setMode("ai")}>
-              Bantu isi dengan AI
             </button>
           </div>
           {mode === "ai" && (
             <>
               <label className={styles.consent}>
                 <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
-                <span>Saya setuju foto dikirim ke Google Gemini untuk saran detail.</span>
+                <span>Saya setuju foto dikirim ke Google Gemini untuk mengisi detail otomatis.</span>
               </label>
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={suggest}
-                disabled={!photo || !consent || !signedIn}
-              >
-                {loading === "suggest" ? "Membaca foto..." : "Buat saran dari foto"}
-              </button>
-              {suggestion && (
-                <SuggestionPreview
-                  suggestion={suggestion}
-                  onApply={applySuggestion}
-                  onDismiss={() => setSuggestion(null)}
-                />
-              )}
+              <div className={styles.authLinks}>
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={suggest}
+                  disabled={!photo || !consent || !signedIn}
+                >
+                  {loading === "suggest" ? "Membaca foto..." : "Deteksi ulang foto"}
+                </button>
+                {suggested.length > 0 && (
+                  <button
+                    type="button"
+                    className={styles.secondaryButton}
+                    onClick={clearDetails}
+                  >
+                    Hapus isian
+                  </button>
+                )}
+              </div>
             </>
           )}
         </div>
@@ -290,7 +316,6 @@ export default function ReportForm() {
           </button>
         )}
       </div>
-      {error && <p className={styles.error} role="alert">{error}</p>}
       {pending && !loading && (
         <p className={styles.status}>
           Data dikunci sementara agar percobaan ulang memakai kiriman yang sama.

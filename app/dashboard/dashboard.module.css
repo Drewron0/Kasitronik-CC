@@ -1183,6 +1183,15 @@
 
 /* Collector, handover code, rating and problem report */
 .collectorPanel { display: flex; flex-direction: column; gap: 16px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--sage-tint); }
+.collectorBadges { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.collectorTypeBadge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: var(--sage); color: var(--green); font-size: 12px; font-weight: 600; line-height: 1.4; }
+.collectorStatusPill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-size: 12px; font-weight: 500; line-height: 1.4; }
+.collectorRatingPill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--green); font-size: 12px; font-weight: 600; line-height: 1.4; }
+.cardCollectorRow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.cardCollectorName { font-weight: 600; color: var(--ink); }
+.collectorRatingInline { display: inline-flex; align-items: center; gap: 4px; color: var(--green); font-weight: 600; }
+.cardOwnerRating { color: var(--green); font-weight: 600; }
+.cardCollectorPending { margin-top: 12px; font-size: 13px; color: var(--muted); }
 .collectorRow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .collectorMeta { font-size: 13px; color: var(--muted); line-height: 1.6; }
 .handoverCard { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 16px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); }

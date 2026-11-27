@@ -87,6 +87,35 @@ export default function SubmissionCard({
           <div className={styles.cardTimeline}>
             <StatusStepper status={item.status} />
           </div>
+
+          {/* Informasi Pengepul & Rating */}
+          {item.collector && (item.status === "accepted" || item.status === "completed") ? (
+            <div className={styles.cardCollectorRow}>
+              <span className={styles.collectorTypeBadge}>Mitra Pengepul</span>
+              <span className={styles.cardCollectorName}>{item.collector.name}</span>
+              <span className={styles.metaDivider} aria-hidden="true">•</span>
+              <span className={styles.collectorRatingInline}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <span>
+                  {item.collector.rating !== null
+                    ? `${item.collector.rating.toFixed(1).replace(".", ",")}/5`
+                    : "Baru"}
+                </span>
+              </span>
+              {item.status === "completed" && item.collector_rating !== null ? (
+                <>
+                  <span className={styles.metaDivider} aria-hidden="true">•</span>
+                  <span className={styles.cardOwnerRating}>Rating Anda: {item.collector_rating}/5</span>
+                </>
+              ) : null}
+            </div>
+          ) : item.status === "pending" ? (
+            <div className={styles.cardCollectorPending}>
+              <span>Mitra Pengepul: Menunggu penjemput terdekat</span>
+            </div>
+          ) : null}
         </div>
       </div>
 

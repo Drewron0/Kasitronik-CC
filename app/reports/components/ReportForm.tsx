@@ -27,7 +27,7 @@ export default function ReportForm() {
   const [details, setDetails] = useState<ItemDetails>({ ...emptyDetails });
   const [location, setLocation] = useState<PickupLocation>({ ...emptyLocation });
   const [mode, setMode] = useState("ai");
-  const [consent, setConsent] = useState(true);
+  const [consent, setConsent] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [suggested, setSuggested] = useState<string[]>([]);
   const [loading, setLoading] = useState<"suggest" | "submit" | null>(null);
